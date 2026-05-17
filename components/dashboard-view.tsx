@@ -1,6 +1,6 @@
 'use client'
 
-import { useShelf, useReadStat } from '@/hooks/use-weread'
+import { useShelf, useReadDetailOverall, useNotebooks } from '@/hooks/use-weread'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { BookOpen, Clock, Bookmark, TrendingUp } from 'lucide-react'
@@ -49,7 +49,8 @@ function formatReadTime(seconds: number): string {
 
 export function DashboardView() {
   const { data: shelfData, isLoading: shelfLoading } = useShelf()
-  const { data: statData, isLoading: statLoading } = useReadStat()
+  const { data: overallData, isLoading: overallLoading } = useReadDetailOverall()
+  const { data: notebooksData, isLoading: notebooksLoading } = useNotebooks()
 
   const books = shelfData?.books || []
   const albums = shelfData?.albums || []
@@ -57,9 +58,10 @@ export function DashboardView() {
   const recentBooks = allItems.slice(0, 8)
   const totalBooks = allItems.length + (shelfData?.mp ? 1 : 0)
 
-  const readTime = statData?.readTime || statData?.totalReadTime || 0
-  const noteCount = statData?.noteCount || statData?.totalNotes || 0
-  const bookCount = statData?.bookCount || statData?.finishedBookCount || totalBooks
+  // Per readdata.md: /readdata/detail returns totalReadTime (seconds), readDays (number)
+  const readTime = (overallData?.totalReadTime || 0) as number
+  // Per notes.md: /user/notebooks returns totalNoteCount
+  const noteCount = (notebooksData?.totalNoteCount || 0) as number
 
   return (
     <div className="flex flex-col gap-8">
@@ -74,20 +76,20 @@ export function DashboardView() {
         <StatCard
           icon={BookOpen}
           label="书架藏书"
-          value={`${bookCount}`}
-          loading={shelfLoading && statLoading}
+          value={`${totalBooks}`}
+          loading={shelfLoading}
         />
         <StatCard
           icon={Clock}
           label="阅读时长"
-          value={formatReadTime(readTime)}
-          loading={statLoading}
+          value={formatReadTime(readTime as number)}
+          loading={overallLoading}
         />
         <StatCard
           icon={Bookmark}
           label="笔记数量"
           value={`${noteCount}`}
-          loading={statLoading}
+          loading={notebooksLoading}
         />
         <StatCard
           icon={TrendingUp}

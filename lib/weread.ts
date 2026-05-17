@@ -59,14 +59,13 @@ export const API = {
   SHELF_SYNC: '/shelf/sync',
   // Book
   BOOK_INFO: '/book/info',
-  BOOK_PROGRESS: '/book/progress',
+  BOOK_GET_PROGRESS: '/book/getprogress',
   BOOK_CHAPTER_INFO: '/book/chapterinfo',
   BOOK_BOOKMARK_LIST: '/book/bookmarklist',
   BOOK_BEST_BOOKMARKS: '/book/bestbookmarks',
   // Notes
   USER_NOTEBOOKS: '/user/notebooks',
-  // Read data / stats
-  READ_DATA_STAT: '/readdata/stat',
+  // Read data / stats — only /readdata/detail exists per spec
   READ_DATA_DETAIL: '/readdata/detail',
   // Search
   STORE_SEARCH: '/store/search',
