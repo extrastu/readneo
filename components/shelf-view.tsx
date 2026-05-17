@@ -11,8 +11,13 @@ import Link from 'next/link'
 export function ShelfView() {
   const { data, isLoading } = useShelf()
 
-  const books = data?.books || data?.shelf || []
-  const allBooks = Array.isArray(books) ? books : []
+  const books = data?.books || []
+  const albums = data?.albums || []
+  const allBooks = [
+    ...(Array.isArray(books) ? books : []),
+    ...(Array.isArray(albums) ? albums : []),
+  ]
+  const totalCount = allBooks.length + (data?.mp ? 1 : 0)
 
   return (
     <div className="flex flex-col gap-6">
@@ -20,7 +25,7 @@ export function ShelfView() {
         <h1 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
           {"书架"}
         </h1>
-        <p className="mt-1 text-muted-foreground">{`共 ${allBooks.length} 本书`}</p>
+        <p className="mt-1 text-muted-foreground">{`共 ${totalCount} 本书`}</p>
       </div>
 
       <Tabs defaultValue="all" className="w-full">

@@ -85,7 +85,7 @@ export function BookDetailView({ bookId }: { bookId: string }) {
                 asChild
               >
                 <a
-                  href={`https://weread.qq.com/web/bookDetail/${bookId}`}
+                  href={`weread://reading?bId=${bookId}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -118,7 +118,7 @@ export function BookDetailView({ bookId }: { bookId: string }) {
         ) : allBookmarks.length > 0 ? (
           <div className="flex flex-col gap-3">
             {allBookmarks.map((bm: Record<string, unknown>, i: number) => (
-              <HighlightCard key={i} bookmark={bm} />
+              <HighlightCard key={i} bookmark={bm} bookId={bookId} />
             ))}
           </div>
         ) : (
@@ -134,10 +134,19 @@ export function BookDetailView({ bookId }: { bookId: string }) {
   )
 }
 
-function HighlightCard({ bookmark }: { bookmark: Record<string, unknown> }) {
+function HighlightCard({ bookmark, bookId }: { bookmark: Record<string, unknown>; bookId: string }) {
   const text = (bookmark.markText || bookmark.text || '') as string
   const chapter = (bookmark.chapterName || bookmark.chapter || '') as string
+  const chapterUid = bookmark.chapterUid as number | undefined
+  const range = (bookmark.range || '') as string
   const [copied, setCopied] = useState(false)
+
+  // Per SKILL spec: generate deep link when chapterUid and range are available
+  let deepLink = ''
+  if (chapterUid && range && range.includes('-')) {
+    const [rangeStart, rangeEnd] = range.split('-')
+    deepLink = `weread://bestbookmark?bookId=${bookId}&chapterUid=${chapterUid}&rangeStart=${rangeStart}&rangeEnd=${rangeEnd}`
+  }
 
   function handleCopy() {
     navigator.clipboard.writeText(text)
@@ -151,9 +160,21 @@ function HighlightCard({ bookmark }: { bookmark: Record<string, unknown> }) {
         <div className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
         <div className="flex-1 flex flex-col gap-1.5">
           <p className="text-sm leading-relaxed text-foreground">{text}</p>
-          {chapter && (
-            <span className="text-xs text-muted-foreground">{chapter}</span>
-          )}
+          <div className="flex items-center gap-2">
+            {chapter && (
+              <span className="text-xs text-muted-foreground">{chapter}</span>
+            )}
+            {deepLink && (
+              <a
+                href={deepLink}
+                className="text-xs text-primary hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {"在 App 中查看"}
+              </a>
+            )}
+          </div>
         </div>
         <Button
           variant="ghost"

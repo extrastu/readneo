@@ -6,15 +6,18 @@ async function fetchWeRead(apiKey: string, apiName: string, params: Record<strin
   const res = await fetch('/api/weread', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    // Per SKILL spec: params flat at top level alongside apiKey/apiName
     body: JSON.stringify({ apiKey, apiName, ...params }),
   })
 
+  const data = await res.json()
+
+  // Surface error message from upstream even if our proxy returns non-ok
   if (!res.ok) {
-    const error = await res.json()
-    throw new Error(error.error || 'Request failed')
+    throw new Error(data.error || 'Request failed')
   }
 
-  return res.json()
+  return data
 }
 
 export function useShelf() {
@@ -30,7 +33,7 @@ export function useNotebooks() {
   const apiKey = useWeReadStore((s) => s.apiKey)
   return useSWR(
     apiKey ? ['notebooks', apiKey] : null,
-    () => fetchWeRead(apiKey!, API.USER_NOTEBOOKS),
+    () => fetchWeRead(apiKey!, API.USER_NOTEBOOKS, { count: 100 }),
     { revalidateOnFocus: false }
   )
 }
@@ -53,15 +56,6 @@ export function useReadStat() {
   )
 }
 
-export function useUserProfile() {
-  const apiKey = useWeReadStore((s) => s.apiKey)
-  return useSWR(
-    apiKey ? ['profile', apiKey] : null,
-    () => fetchWeRead(apiKey!, API.USER_PROFILE),
-    { revalidateOnFocus: false }
-  )
-}
-
 export function useBookInfo(bookId: string | null) {
   const apiKey = useWeReadStore((s) => s.apiKey)
   return useSWR(
@@ -75,16 +69,17 @@ export function useSearch(keyword: string) {
   const apiKey = useWeReadStore((s) => s.apiKey)
   return useSWR(
     apiKey && keyword ? ['search', keyword, apiKey] : null,
-    () => fetchWeRead(apiKey!, API.STORE_SEARCH, { keyword }),
+    () => fetchWeRead(apiKey!, API.STORE_SEARCH, { keyword, count: 20 }),
     { revalidateOnFocus: false, dedupingInterval: 500 }
   )
 }
 
+// Use /book/bookmarklist per SKILL spec (not /book/bookmarks)
 export function useBookmarks(bookId: string | null) {
   const apiKey = useWeReadStore((s) => s.apiKey)
   return useSWR(
     apiKey && bookId ? ['bookmarks', bookId, apiKey] : null,
-    () => fetchWeRead(apiKey!, API.BOOK_BOOKMARKS, { bookId }),
+    () => fetchWeRead(apiKey!, API.BOOK_BOOKMARK_LIST, { bookId }),
     { revalidateOnFocus: false }
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useShelf, useReadStat, useUserProfile } from '@/hooks/use-weread'
+import { useShelf, useReadStat } from '@/hooks/use-weread'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { BookOpen, Clock, Bookmark, TrendingUp } from 'lucide-react'
@@ -50,29 +50,22 @@ function formatReadTime(seconds: number): string {
 export function DashboardView() {
   const { data: shelfData, isLoading: shelfLoading } = useShelf()
   const { data: statData, isLoading: statLoading } = useReadStat()
-  const { data: profileData, isLoading: profileLoading } = useUserProfile()
 
-  const books = shelfData?.books || shelfData?.shelf || []
-  const recentBooks = Array.isArray(books) ? books.slice(0, 8) : []
-  const totalBooks = Array.isArray(books) ? books.length : 0
+  const books = shelfData?.books || []
+  const albums = shelfData?.albums || []
+  const allItems = [...(Array.isArray(books) ? books : []), ...(Array.isArray(albums) ? albums : [])]
+  const recentBooks = allItems.slice(0, 8)
+  const totalBooks = allItems.length + (shelfData?.mp ? 1 : 0)
 
   const readTime = statData?.readTime || statData?.totalReadTime || 0
   const noteCount = statData?.noteCount || statData?.totalNotes || 0
   const bookCount = statData?.bookCount || statData?.finishedBookCount || totalBooks
 
-  const username = profileData?.name || profileData?.userInfo?.name || ''
-
   return (
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-          {profileLoading ? (
-            <Skeleton className="h-9 w-40" />
-          ) : username ? (
-            `${username}，你好`
-          ) : (
-            '阅读概览'
-          )}
+          {"阅读概览"}
         </h1>
         <p className="mt-1 text-muted-foreground">{"管理你的阅读数据与书摘笔记"}</p>
       </div>

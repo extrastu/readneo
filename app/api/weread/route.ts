@@ -3,20 +3,27 @@ import { wereadFetch } from '@/lib/weread'
 
 export async function POST(request: NextRequest) {
   try {
-    const { apiKey, apiName, ...params } = await request.json()
+    const body = await request.json()
+    const { apiKey, apiName, ...params } = body
 
-    if (!apiKey) {
+    if (!apiKey || typeof apiKey !== 'string') {
       return NextResponse.json({ error: 'API Key is required' }, { status: 400 })
     }
 
-    if (!apiName) {
+    if (!apiName || typeof apiName !== 'string') {
       return NextResponse.json({ error: 'API name is required' }, { status: 400 })
     }
 
+    console.log('[v0] WeRead request:', apiName, JSON.stringify(params))
+
     const data = await wereadFetch(apiKey, apiName, params)
+
+    console.log('[v0] WeRead response keys:', Object.keys(data))
+
     return NextResponse.json(data)
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('[v0] WeRead API error:', message)
+    return NextResponse.json({ error: message }, { status: 502 })
   }
 }

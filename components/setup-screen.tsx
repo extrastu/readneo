@@ -20,10 +20,11 @@ export function SetupScreen() {
     setError('')
 
     try {
+      // Validate by calling /shelf/sync — a known valid endpoint per SKILL spec
       const res = await fetch('/api/weread', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ apiKey: key.trim(), apiName: '/user/profile' }),
+        body: JSON.stringify({ apiKey: key.trim(), apiName: '/shelf/sync' }),
       })
 
       if (!res.ok) {
