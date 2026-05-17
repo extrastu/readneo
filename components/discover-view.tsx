@@ -25,12 +25,12 @@ export function DiscoverView() {
   const [noMore, setNoMore] = useState(false)
 
   const initialBooks = (data?.books || []) as Record<string, unknown>[]
-  const allBooks = [...initialBooks, ...extraBooks]
+  const displayBooks = extraBooks.length > 0 ? extraBooks : initialBooks
 
   async function handleLoadMore() {
     if (!apiKey || loadingMore) return
 
-    const lastBook = allBooks[allBooks.length - 1]
+    const lastBook = displayBooks[displayBooks.length - 1]
     const nextIdx = (lastBook?.searchIdx as number) || lastMaxIdx + 12
 
     setLoadingMore(true)
@@ -43,12 +43,13 @@ export function DiscoverView() {
       if (moreBooks.length === 0) {
         setNoMore(true)
       } else {
-        setExtraBooks((prev) => [...prev, ...moreBooks])
+        // Replace instead of append
+        setExtraBooks(moreBooks)
         const last = moreBooks[moreBooks.length - 1]
         setLastMaxIdx((last?.searchIdx as number) || nextIdx + 12)
       }
     } catch (err) {
-      console.error('[v0] Failed to load more recommendations:', err)
+      console.error('Failed to load more recommendations:', err)
     } finally {
       setLoadingMore(false)
     }
@@ -76,7 +77,7 @@ export function DiscoverView() {
         </div>
       )}
 
-      {!isLoading && allBooks.length === 0 && (
+      {!isLoading && displayBooks.length === 0 && (
         <Card className="border-0 shadow-sm bg-muted/30">
           <CardContent className="flex flex-col items-center justify-center py-20 text-center">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
@@ -87,16 +88,16 @@ export function DiscoverView() {
         </Card>
       )}
 
-      {allBooks.length > 0 && (
+      {displayBooks.length > 0 && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-          {allBooks.map((book: Record<string, unknown>, i: number) => (
+          {displayBooks.map((book: Record<string, unknown>, i: number) => (
             <RecommendBookCard key={`${book.bookId}-${i}`} book={book} />
           ))}
         </div>
       )}
 
       {/* Load more */}
-      {!isLoading && allBooks.length > 0 && !noMore && (
+      {!isLoading && displayBooks.length > 0 && !noMore && (
         <div className="flex justify-center pt-2">
           <Button
             variant="outline"

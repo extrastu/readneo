@@ -13,7 +13,6 @@ import {
   Settings,
   LogOut,
   Sparkles,
-  User,
   Download,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -25,7 +24,6 @@ const navItems = [
   { href: '/stats', label: '统计', icon: BarChart3 },
   { href: '/discover', label: '发现', icon: Sparkles },
   { href: '/search', label: '搜索', icon: Search },
-  { href: '/profile', label: '我的', icon: User },
 ]
 
 export function AppSidebar() {
