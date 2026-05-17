@@ -1,7 +1,7 @@
 'use client'
 
 import { useWeReadStore } from '@/lib/store'
-import { SetupScreen } from '@/components/setup-screen'
+import { LandingPage } from '@/components/landing-page'
 import { AppShell } from '@/components/app-shell'
 import { DashboardView } from '@/components/dashboard-view'
 import { useEffect, useState } from 'react'
@@ -23,7 +23,7 @@ export default function Home() {
   }
 
   if (!isConfigured) {
-    return <SetupScreen />
+    return <LandingPage />
   }
 
   return (
