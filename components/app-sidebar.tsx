@@ -11,10 +11,10 @@ import {
   BarChart3,
   Search,
   Settings,
-  BookOpen,
   LogOut,
   Sparkles,
   User,
+  Download,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -35,9 +35,7 @@ export function AppSidebar() {
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-full w-60 flex-col border-r border-border bg-card">
       <div className="flex items-center gap-3 px-6 py-6">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
-          <BookOpen className="h-5 w-5 text-primary" />
-        </div>
+        <img src="/icon.svg" alt="ReadFlow" className="h-9 w-9 rounded-xl" />
         <span className="text-lg font-semibold tracking-tight text-foreground">ReadFlow</span>
       </div>
 
@@ -63,6 +61,18 @@ export function AppSidebar() {
       </nav>
 
       <div className="flex flex-col gap-1 border-t border-border p-3">
+        <Link
+          href="/export"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+            pathname === '/export'
+              ? 'bg-primary/10 text-primary'
+              : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+          )}
+        >
+          <Download className="h-4.5 w-4.5" />
+          {"导出数据"}
+        </Link>
         <Link
           href="/settings"
           className={cn(

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useWeReadStore } from '@/lib/store'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { BookOpen, Key, ArrowRight } from 'lucide-react'
+import { Key, ArrowRight } from 'lucide-react'
 
 export function SetupScreen() {
   const [key, setKey] = useState('')
@@ -43,9 +43,7 @@ export function SetupScreen() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
         <div className="mb-10 flex flex-col items-center gap-4 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-            <BookOpen className="h-8 w-8 text-primary" />
-          </div>
+          <img src="/icon.svg" alt="ReadFlow" className="h-16 w-16 rounded-2xl" />
           <h1 className="text-3xl font-semibold tracking-tight text-foreground text-balance">
             ReadFlow
           </h1>

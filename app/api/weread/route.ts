@@ -19,7 +19,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(data)
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error'
-    console.error('[v0] WeRead API error:', message)
     return NextResponse.json({ error: message }, { status: 502 })
   }
 }
