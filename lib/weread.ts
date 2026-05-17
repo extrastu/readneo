@@ -70,8 +70,10 @@ export const API = {
   // Search
   STORE_SEARCH: '/store/search',
   // Reviews
-  BOOK_READ_REVIEWS: '/book/readreviews',
+  REVIEW_LIST: '/review/list',
   REVIEW_LIST_MINE: '/review/list/mine',
   // Discovery
+  BOOK_RECOMMEND: '/book/recommend',
+  BOOK_SIMILAR: '/book/similar',
   LIST_APIS: '/_list',
 } as const

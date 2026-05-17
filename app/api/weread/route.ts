@@ -14,11 +14,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'API name is required' }, { status: 400 })
     }
 
-    console.log('[v0] WeRead request:', apiName, JSON.stringify(params))
-
     const data = await wereadFetch(apiKey, apiName, params)
-
-    console.log('[v0] WeRead response keys:', Object.keys(data))
 
     return NextResponse.json(data)
   } catch (error) {

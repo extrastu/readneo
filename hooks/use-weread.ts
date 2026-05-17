@@ -2,7 +2,7 @@ import { useWeReadStore } from '@/lib/store'
 import { API } from '@/lib/weread'
 import useSWR from 'swr'
 
-async function fetchWeRead(apiKey: string, apiName: string, params: Record<string, unknown> = {}) {
+export async function fetchWeRead(apiKey: string, apiName: string, params: Record<string, unknown> = {}) {
   const res = await fetch('/api/weread', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -29,8 +29,6 @@ export function useShelf() {
 }
 
 // Notes overview: /user/notebooks
-// Returns books[] with per-book counts (reviewCount, noteCount, bookmarkCount)
-// Does NOT return note content -- use /book/bookmarklist + /review/list/mine for content
 export function useNotebooks() {
   const apiKey = useWeReadStore((s) => s.apiKey)
   return useSWR(
@@ -40,8 +38,7 @@ export function useNotebooks() {
   )
 }
 
-// Reading stats: /readdata/detail (the only stats API per spec)
-// Default mode=monthly; returns totalReadTime (seconds), readDays (number), readTimes (object), etc.
+// Reading stats: /readdata/detail
 export function useReadDetail(mode: string = 'monthly', baseTime: number = 0) {
   const apiKey = useWeReadStore((s) => s.apiKey)
   const params: Record<string, unknown> = { mode }
@@ -73,7 +70,7 @@ export function useBookInfo(bookId: string | null) {
   )
 }
 
-// Book progress: /book/getprogress (per book.md spec)
+// Book progress: /book/getprogress
 export function useBookProgress(bookId: string | null) {
   const apiKey = useWeReadStore((s) => s.apiKey)
   return useSWR(
@@ -83,18 +80,19 @@ export function useBookProgress(bookId: string | null) {
   )
 }
 
-// Search: /store/search
-export function useSearch(keyword: string) {
+// Search: /store/search — V3 format with scope
+export function useSearch(keyword: string, scope: number = 10, maxIdx: number = 0) {
   const apiKey = useWeReadStore((s) => s.apiKey)
+  const params: Record<string, unknown> = { keyword, scope }
+  if (maxIdx > 0) params.maxIdx = maxIdx
   return useSWR(
-    apiKey && keyword ? ['search', keyword, apiKey] : null,
-    () => fetchWeRead(apiKey!, API.STORE_SEARCH, { keyword, count: 20 }),
+    apiKey && keyword ? ['search', keyword, scope, maxIdx, apiKey] : null,
+    () => fetchWeRead(apiKey!, API.STORE_SEARCH, params),
     { revalidateOnFocus: false, dedupingInterval: 500 }
   )
 }
 
 // Book highlights (划线): /book/bookmarklist
-// Returns updated[] array with markText, chapterUid, range etc.
 export function useBookmarklist(bookId: string | null) {
   const apiKey = useWeReadStore((s) => s.apiKey)
   return useSWR(
@@ -104,13 +102,25 @@ export function useBookmarklist(bookId: string | null) {
   )
 }
 
-// Book reviews/thoughts (想法/点评): /review/list/mine
-// Returns reviews[] with review.content, review.chapterName, etc.
+// Personal reviews/thoughts: /review/list/mine
 export function useReviewListMine(bookId: string | null) {
   const apiKey = useWeReadStore((s) => s.apiKey)
   return useSWR(
-    apiKey && bookId ? ['reviews', bookId, apiKey] : null,
+    apiKey && bookId ? ['reviews-mine', bookId, apiKey] : null,
     () => fetchWeRead(apiKey!, API.REVIEW_LIST_MINE, { bookid: bookId, count: 200 }),
+    { revalidateOnFocus: false }
+  )
+}
+
+// Public reviews: /review/list — per review.md
+export function useReviewList(bookId: string | null, reviewListType: number = 0, maxIdx: number = 0, synckey: number = 0) {
+  const apiKey = useWeReadStore((s) => s.apiKey)
+  const params: Record<string, unknown> = { bookId, reviewListType }
+  if (maxIdx > 0) params.maxIdx = maxIdx
+  if (synckey > 0) params.synckey = synckey
+  return useSWR(
+    apiKey && bookId ? ['reviews-public', bookId, reviewListType, maxIdx, apiKey] : null,
+    () => fetchWeRead(apiKey!, API.REVIEW_LIST, params),
     { revalidateOnFocus: false }
   )
 }
@@ -121,6 +131,18 @@ export function useBestBookmarks(bookId: string | null) {
   return useSWR(
     apiKey && bookId ? ['bestbookmarks', bookId, apiKey] : null,
     () => fetchWeRead(apiKey!, API.BOOK_BEST_BOOKMARKS, { bookId }),
+    { revalidateOnFocus: false }
+  )
+}
+
+// Recommendations: /book/recommend — per discover.md
+export function useRecommend(maxIdx: number = 0) {
+  const apiKey = useWeReadStore((s) => s.apiKey)
+  const params: Record<string, unknown> = { count: 12 }
+  if (maxIdx > 0) params.maxIdx = maxIdx
+  return useSWR(
+    apiKey ? ['recommend', maxIdx, apiKey] : null,
+    () => fetchWeRead(apiKey!, API.BOOK_RECOMMEND, params),
     { revalidateOnFocus: false }
   )
 }

@@ -6,17 +6,17 @@ import { cn } from '@/lib/utils'
 import {
   LayoutDashboard,
   Library,
-  Highlighter,
-  BarChart3,
+  Sparkles,
   Search,
+  User,
 } from 'lucide-react'
 
 const navItems = [
   { href: '/', label: '概览', icon: LayoutDashboard },
   { href: '/shelf', label: '书架', icon: Library },
-  { href: '/notes', label: '笔记', icon: Highlighter },
-  { href: '/stats', label: '统计', icon: BarChart3 },
+  { href: '/discover', label: '发现', icon: Sparkles },
   { href: '/search', label: '搜索', icon: Search },
+  { href: '/profile', label: '我的', icon: User },
 ]
 
 export function MobileNav() {

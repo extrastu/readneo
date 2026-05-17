@@ -13,6 +13,8 @@ import {
   Settings,
   BookOpen,
   LogOut,
+  Sparkles,
+  User,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -21,7 +23,9 @@ const navItems = [
   { href: '/shelf', label: '书架', icon: Library },
   { href: '/notes', label: '笔记', icon: Highlighter },
   { href: '/stats', label: '统计', icon: BarChart3 },
+  { href: '/discover', label: '发现', icon: Sparkles },
   { href: '/search', label: '搜索', icon: Search },
+  { href: '/profile', label: '我的', icon: User },
 ]
 
 export function AppSidebar() {
