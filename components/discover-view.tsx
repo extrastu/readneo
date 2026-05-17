@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Sparkles, Star, Users, BookOpen, ChevronDown, Loader2 } from 'lucide-react'
+import { Sparkles, Star, Users, BookOpen, RefreshCw, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -24,14 +24,12 @@ export function DiscoverView() {
   const [lastMaxIdx, setLastMaxIdx] = useState(0)
   const [noMore, setNoMore] = useState(false)
 
-  // Per discover.md: /book/recommend returns books[]
   const initialBooks = (data?.books || []) as Record<string, unknown>[]
   const allBooks = [...initialBooks, ...extraBooks]
 
   async function handleLoadMore() {
     if (!apiKey || loadingMore) return
 
-    // Use last book's searchIdx as maxIdx per discover.md
     const lastBook = allBooks[allBooks.length - 1]
     const nextIdx = (lastBook?.searchIdx as number) || lastMaxIdx + 12
 
@@ -59,17 +57,17 @@ export function DiscoverView() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-          <Sparkles className="h-6 w-6 text-primary md:h-7 md:w-7" />
+        <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-foreground">
+          <Sparkles className="h-5 w-5 text-primary" />
           {"发现"}
         </h1>
-        <p className="mt-1 text-muted-foreground">{"基于你的阅读记录，为你推荐好书"}</p>
+        <p className="mt-1.5 text-[15px] text-muted-foreground">{"基于你的阅读记录，为你推荐好书"}</p>
       </div>
 
       {isLoading && (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className="flex flex-col gap-3">
+            <div key={i} className="flex flex-col gap-2.5">
               <Skeleton className="aspect-[3/4] w-full rounded-lg" />
               <Skeleton className="h-4 w-3/4" />
               <Skeleton className="h-3 w-1/2" />
@@ -79,16 +77,18 @@ export function DiscoverView() {
       )}
 
       {!isLoading && allBooks.length === 0 && (
-        <Card className="border-border">
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <Sparkles className="mb-3 h-10 w-10 text-muted-foreground" />
-            <p className="text-muted-foreground">{"暂无推荐，多读几本书就有啦"}</p>
+        <Card className="border-0 shadow-sm bg-muted/30">
+          <CardContent className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+              <Sparkles className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <p className="text-[15px] text-muted-foreground">{"暂无推荐，多读几本书就有啦"}</p>
           </CardContent>
         </Card>
       )}
 
       {allBooks.length > 0 && (
-        <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {allBooks.map((book: Record<string, unknown>, i: number) => (
             <RecommendBookCard key={`${book.bookId}-${i}`} book={book} />
           ))}
@@ -102,12 +102,12 @@ export function DiscoverView() {
             variant="outline"
             onClick={handleLoadMore}
             disabled={loadingMore}
-            className="gap-2"
+            className="gap-2 h-10 px-5 border-0 shadow-sm bg-card hover:bg-muted"
           >
             {loadingMore ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              <ChevronDown className="h-4 w-4" />
+              <RefreshCw className="h-4 w-4" />
             )}
             {loadingMore ? '加载中...' : '换一批推荐'}
           </Button>
@@ -133,37 +133,37 @@ function RecommendBookCard({ book }: { book: Record<string, unknown> }) {
       href={bookId ? `/book/${bookId}` : '#'}
       className="group flex flex-col gap-2.5"
     >
-      <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-muted shadow-sm transition-shadow group-hover:shadow-md">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-muted shadow-sm ring-1 ring-border/50 transition-all duration-200 group-hover:shadow-lg group-hover:ring-border group-hover:-translate-y-0.5">
         {cover ? (
           <Image
             src={cover}
             alt={title}
             fill
-            className="object-cover transition-transform group-hover:scale-105"
+            className="object-cover"
             unoptimized
           />
         ) : (
-          <div className="flex h-full items-center justify-center bg-accent">
-            <BookOpen className="h-8 w-8 text-muted-foreground" />
+          <div className="flex h-full items-center justify-center bg-muted">
+            <BookOpen className="h-8 w-8 text-muted-foreground/50" />
           </div>
         )}
 
         {/* Rating overlay */}
         {rating && rating > 0 && (
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-2 pb-2 pt-6">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-2.5 pb-2 pt-8">
             <div className="flex items-center gap-1">
               <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" />
-              <span className="text-xs font-medium text-white">{formatRating(rating)}</span>
+              <span className="text-[11px] font-medium text-white">{formatRating(rating)}</span>
               {ratingLabel && (
-                <span className="text-xs text-white/80">{ratingLabel}</span>
+                <span className="text-[11px] text-white/80">{ratingLabel}</span>
               )}
             </div>
           </div>
         )}
       </div>
 
-      <div className="flex flex-col gap-0.5">
-        <span className="text-sm font-medium text-foreground line-clamp-2 text-pretty">
+      <div className="flex flex-col gap-0.5 px-0.5">
+        <span className="text-[13px] font-medium text-foreground line-clamp-2 leading-snug">
           {title}
         </span>
         <span className="text-xs text-muted-foreground line-clamp-1">{author}</span>
@@ -172,16 +172,16 @@ function RecommendBookCard({ book }: { book: Record<string, unknown> }) {
           {readingCount > 0 && (
             <div className="flex items-center gap-0.5">
               <Users className="h-3 w-3 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground">{readingCount}</span>
+              <span className="text-[11px] text-muted-foreground">{readingCount}</span>
             </div>
           )}
           {category && (
-            <Badge variant="secondary" className="text-xs px-1.5 py-0">{category}</Badge>
+            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">{category}</Badge>
           )}
         </div>
 
         {reason && (
-          <p className="mt-1 text-xs text-primary/80 line-clamp-2 leading-relaxed">
+          <p className="mt-1 text-[11px] text-primary/80 line-clamp-2 leading-relaxed">
             {reason}
           </p>
         )}

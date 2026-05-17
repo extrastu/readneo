@@ -10,8 +10,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <AppSidebar />
       </div>
       <MobileNav />
-      <main className="md:pl-60">
-        <div className="mx-auto max-w-6xl px-4 py-6 pb-24 md:px-8 md:py-8 md:pb-8">
+      <main className="md:pl-[232px]">
+        <div className="mx-auto max-w-5xl px-4 py-5 pb-24 md:px-6 md:py-7 md:pb-7">
           {children}
         </div>
       </main>
