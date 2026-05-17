@@ -139,6 +139,7 @@ export function LandingPage() {
             {"开始使用"}
             <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
           </Button>
+          </div>
         </div>
       </header>
 
