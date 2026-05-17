@@ -82,9 +82,9 @@ export function SetupScreen() {
           <h3 className="text-sm font-medium text-foreground mb-2">{"如何获取 API Key？"}</h3>
           <ol className="flex flex-col gap-1.5 text-sm text-muted-foreground leading-relaxed">
             <li>{"1. 打开微信读书 App"}</li>
-            <li>{"2. 进入「我」→「更多设置」"}</li>
-            <li>{"3. 找到「开放 API」或相关选项"}</li>
-            <li>{"4. 复制生成的 API Key"}</li>
+            <li>{"2. 进入「我」→「设置」"}</li>
+            <li>{"3. 找到「微信读书 Skill」或相关选项"}</li>
+            <li>{"4. 滚到底部复制生成的 API Key"}</li>
           </ol>
         </div>
       </div>
