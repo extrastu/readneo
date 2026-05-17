@@ -219,8 +219,8 @@ export function ExportView() {
             body: JSON.stringify({ content }),
           })
           totalSynced++
-          // Rate limiting: 200ms between requests
-          await new Promise((r) => setTimeout(r, 200))
+          // Rate limiting: 1s between requests
+          await new Promise((r) => setTimeout(r, 1000))
         }
 
         // Sync reviews
@@ -238,7 +238,7 @@ export function ExportView() {
             body: JSON.stringify({ content }),
           })
           totalSynced++
-          await new Promise((r) => setTimeout(r, 200))
+          await new Promise((r) => setTimeout(r, 1000))
         }
       }
 
@@ -304,7 +304,7 @@ export function ExportView() {
             }),
           })
           totalSynced++
-          await new Promise((r) => setTimeout(r, 350))
+          await new Promise((r) => setTimeout(r, 1000))
         }
 
         // Sync reviews
@@ -330,7 +330,7 @@ export function ExportView() {
             }),
           })
           totalSynced++
-          await new Promise((r) => setTimeout(r, 350))
+          await new Promise((r) => setTimeout(r, 1000))
         }
       }
 
