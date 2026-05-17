@@ -39,13 +39,15 @@ export function AppSidebar() {
   }
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-full w-60 flex-col border-r border-border bg-card">
-      <div className="flex items-center gap-3 px-6 py-6">
-        <img src="/icon.svg" alt="readNeo" className="h-9 w-9 rounded-xl" />
-        <span className="text-lg font-semibold tracking-tight text-foreground">readNeo</span>
+    <aside className="fixed left-0 top-0 z-40 flex h-full w-[232px] flex-col border-r border-sidebar-border bg-sidebar">
+      {/* Logo */}
+      <div className="flex items-center gap-2.5 px-5 py-5">
+        <img src="/icon.svg" alt="readNeo" className="h-8 w-8 rounded-lg shadow-sm" />
+        <span className="text-[15px] font-semibold tracking-tight text-sidebar-foreground">readNeo</span>
       </div>
 
-      <nav className="flex flex-1 flex-col gap-1 px-3">
+      {/* Main nav */}
+      <nav className="flex flex-1 flex-col gap-0.5 px-3 pt-1">
         {navItems.map((item) => {
           const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
           return (
@@ -53,51 +55,52 @@ export function AppSidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                'flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium transition-all duration-150',
                 isActive
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                  ? 'bg-sidebar-accent text-sidebar-foreground shadow-sm'
+                  : 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-foreground'
               )}
             >
-              <item.icon className="h-4.5 w-4.5" />
+              <item.icon className={cn('h-[18px] w-[18px]', isActive && 'text-sidebar-primary')} />
               {item.label}
             </Link>
           )
         })}
       </nav>
 
-      <div className="flex flex-col gap-1 border-t border-border p-3">
+      {/* Bottom section */}
+      <div className="flex flex-col gap-0.5 border-t border-sidebar-border px-3 py-3">
         <Link
           href="/export"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+            'flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium transition-all duration-150',
             pathname === '/export'
-              ? 'bg-primary/10 text-primary'
-              : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+              ? 'bg-sidebar-accent text-sidebar-foreground shadow-sm'
+              : 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-foreground'
           )}
         >
-          <Download className="h-4.5 w-4.5" />
+          <Download className={cn('h-[18px] w-[18px]', pathname === '/export' && 'text-sidebar-primary')} />
           {"导出数据"}
         </Link>
         <Link
           href="/settings"
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+            'flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium transition-all duration-150',
             pathname === '/settings'
-              ? 'bg-primary/10 text-primary'
-              : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+              ? 'bg-sidebar-accent text-sidebar-foreground shadow-sm'
+              : 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-foreground'
           )}
         >
-          <Settings className="h-4.5 w-4.5" />
+          <Settings className={cn('h-[18px] w-[18px]', pathname === '/settings' && 'text-sidebar-primary')} />
           {"设置"}
         </Link>
         <Button
           variant="ghost"
           size="sm"
-          className="justify-start gap-3 px-3 text-muted-foreground hover:text-destructive"
+          className="justify-start gap-2.5 px-2.5 h-9 text-[13px] font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/8"
           onClick={handleLogout}
         >
-          <LogOut className="h-4.5 w-4.5" />
+          <LogOut className="h-[18px] w-[18px]" />
           {"退出登录"}
         </Button>
       </div>

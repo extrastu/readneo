@@ -4,13 +4,11 @@ import { useReadDetail, useReadDetailOverall } from '@/hooks/use-weread'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
-import { BarChart3, Clock, BookOpen, Flame, Calendar, TrendingUp } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Clock, BookOpen, Calendar, TrendingUp } from 'lucide-react'
 import {
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ResponsiveContainer,
   AreaChart,
@@ -18,20 +16,19 @@ import {
 } from 'recharts'
 import { useState } from 'react'
 
-// Per readdata.md: all time fields are in SECONDS
 function formatDuration(seconds: number): string {
   if (!seconds) return '0 分钟'
   const hours = Math.floor(seconds / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
-  if (hours > 0) return `${hours} 小时 ${minutes} 分钟`
+  if (hours > 0) return `${hours}h ${minutes}m`
   return `${minutes} 分钟`
 }
 
 function formatShortDuration(seconds: number): string {
-  if (!seconds) return '0分'
+  if (!seconds) return '0m'
   const hours = Math.floor(seconds / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
-  if (hours > 0) return `${hours}h${minutes}m`
+  if (hours > 0) return `${hours}h${minutes > 0 ? `${minutes}m` : ''}`
   return `${minutes}m`
 }
 
@@ -44,17 +41,13 @@ export function StatsView() {
 
   const isLoading = detailLoading || overallLoading
 
-  // Per readdata.md: totalReadTime is in seconds
   const totalReadTime = (detailData?.totalReadTime || 0) as number
   const readDays = (detailData?.readDays || 0) as number
   const dayAverageReadTime = (detailData?.dayAverageReadTime || 0) as number
   const compare = detailData?.compare as number | undefined
 
-  // Overall stats for top cards
   const overallReadTime = (overallData?.totalReadTime || 0) as number
-  const overallReadDays = (overallData?.readDays || 0) as number
 
-  // Per readdata.md: readTimes is an object { timestamp: seconds }
   const readTimes = (detailData?.readTimes || {}) as Record<string, number>
   const readTimesEntries = Object.entries(readTimes)
     .map(([ts, seconds]) => ({
@@ -69,13 +62,8 @@ export function StatsView() {
     }))
     .sort((a, b) => a.timestamp - b.timestamp)
 
-  // Per readdata.md: readLongest[] is top books by reading time
   const readLongest = (detailData?.readLongest || []) as Record<string, unknown>[]
-
-  // Per readdata.md: readStat[] has stat/counts pairs
   const readStatItems = (detailData?.readStat || []) as Record<string, unknown>[]
-
-  // Per readdata.md: preferCategory[] for reading preferences
   const preferCategories = (detailData?.preferCategory || []) as Record<string, unknown>[]
   const preferTimeWord = (detailData?.preferTimeWord || '') as string
 
@@ -89,33 +77,37 @@ export function StatsView() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
           {"阅读统计"}
         </h1>
-        <p className="mt-1 text-muted-foreground">{"可视化你的阅读历程"}</p>
+        <p className="mt-1.5 text-[15px] text-muted-foreground">{"可视化你的阅读历程"}</p>
       </div>
 
       {/* Mode selector */}
-      <div className="flex gap-2">
+      <div className="flex gap-1.5 p-1 bg-muted/60 rounded-lg w-fit">
         {(['weekly', 'monthly', 'annually', 'overall'] as ModeType[]).map((m) => (
-          <Button
+          <button
             key={m}
-            variant={mode === m ? 'default' : 'outline'}
-            size="sm"
             onClick={() => setMode(m)}
+            className={`px-4 py-1.5 text-[13px] font-medium rounded-md transition-all ${
+              mode === m
+                ? 'bg-card text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
           >
             {modeLabels[m]}
-          </Button>
+          </button>
         ))}
       </div>
 
-      {/* Top summary cards */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      {/* Stats cards */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatMiniCard
           icon={Clock}
           label={`${modeLabels[mode]}时长`}
           value={formatDuration(totalReadTime)}
           loading={isLoading}
+          accent
         />
         <StatMiniCard
           icon={Calendar}
@@ -124,77 +116,82 @@ export function StatsView() {
           loading={isLoading}
         />
         <StatMiniCard
-          icon={BarChart3}
+          icon={TrendingUp}
           label="日均时长"
           value={formatDuration(dayAverageReadTime)}
           loading={isLoading}
         />
         <StatMiniCard
-          icon={TrendingUp}
+          icon={BookOpen}
           label="累计总时长"
           value={formatDuration(overallReadTime)}
           loading={overallLoading}
         />
       </div>
 
-      {/* Compare with last period */}
+      {/* Compare badge */}
       {compare !== undefined && compare !== null && (
-        <div className="text-sm text-muted-foreground">
+        <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-medium w-fit ${
+          compare >= 0 ? 'bg-chart-2/10 text-chart-2' : 'bg-destructive/10 text-destructive'
+        }`}>
+          <TrendingUp className={`h-3.5 w-3.5 ${compare < 0 && 'rotate-180'}`} />
           {compare >= 0
-            ? `相比上个周期，日均阅读增长 ${Math.round(compare * 100)}%`
-            : `相比上个周期，日均阅读下降 ${Math.round(Math.abs(compare) * 100)}%`}
+            ? `相比上个周期增长 ${Math.round(compare * 100)}%`
+            : `相比上个周期下降 ${Math.round(Math.abs(compare) * 100)}%`}
         </div>
       )}
 
-      {/* readStat summary badges */}
+      {/* Stat badges */}
       {readStatItems.length > 0 && (
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2">
           {readStatItems.map((item, i) => (
-            <Badge key={i} variant="secondary" className="text-sm px-3 py-1">
+            <Badge key={i} variant="secondary" className="text-[13px] px-3 py-1 font-normal">
               {`${item.stat}: ${item.counts}`}
             </Badge>
           ))}
         </div>
       )}
 
-      {/* Reading time chart */}
-      <Card className="border-border">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold text-foreground">
+      {/* Chart */}
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-2 px-5 pt-5">
+          <CardTitle className="text-[15px] font-semibold text-foreground">
             {`${modeLabels[mode]}阅读时长`}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-5 pb-5">
           {isLoading ? (
-            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-56 w-full" />
           ) : readTimesEntries.length > 0 ? (
-            <ResponsiveContainer width="100%" height={260}>
+            <ResponsiveContainer width="100%" height={220}>
               <AreaChart data={readTimesEntries}>
                 <defs>
                   <linearGradient id="colorMinutes" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="oklch(0.55 0.12 45)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="oklch(0.55 0.12 45)" stopOpacity={0} />
+                    <stop offset="5%" stopColor="oklch(0.48 0.14 42)" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="oklch(0.48 0.14 42)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.91 0.01 80)" />
                 <XAxis
                   dataKey="date"
-                  tick={{ fontSize: 11, fill: 'oklch(0.5 0.02 60)' }}
+                  tick={{ fontSize: 11, fill: 'oklch(0.45 0.015 50)' }}
                   axisLine={false}
                   tickLine={false}
+                  dy={8}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: 'oklch(0.5 0.02 60)' }}
+                  tick={{ fontSize: 11, fill: 'oklch(0.45 0.015 50)' }}
                   axisLine={false}
                   tickLine={false}
-                  unit=" 分"
+                  dx={-8}
+                  unit="m"
                 />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: 'oklch(1 0 0)',
-                    border: '1px solid oklch(0.91 0.01 80)',
+                    border: '1px solid oklch(0.92 0.008 75)',
                     borderRadius: '8px',
                     fontSize: 13,
+                    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
                   }}
                   formatter={(value: number) => [`${value} 分钟`, '阅读时长']}
                   labelFormatter={(_: unknown, payload: Array<Record<string, unknown>>) => {
@@ -208,7 +205,7 @@ export function StatsView() {
                 <Area
                   type="monotone"
                   dataKey="minutes"
-                  stroke="oklch(0.55 0.12 45)"
+                  stroke="oklch(0.48 0.14 42)"
                   strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#colorMinutes)"
@@ -216,22 +213,22 @@ export function StatsView() {
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex h-64 items-center justify-center text-muted-foreground">
+            <div className="flex h-56 items-center justify-center text-[15px] text-muted-foreground">
               {"暂无阅读数据"}
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Top books by reading time */}
+      {/* Top books */}
       {readLongest.length > 0 && (
-        <Card className="border-border">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold text-foreground">
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-2 px-5 pt-5">
+            <CardTitle className="text-[15px] font-semibold text-foreground">
               {"读得最多"}
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-5 pb-5">
             <div className="flex flex-col divide-y divide-border">
               {readLongest.map((item, i) => {
                 const book = (item.book || {}) as Record<string, unknown>
@@ -243,32 +240,32 @@ export function StatsView() {
                 const tags = (item.tags || []) as string[]
 
                 return (
-                  <div key={i} className="flex items-center gap-4 py-3">
-                    <span className="w-6 text-center text-sm font-semibold text-muted-foreground">
+                  <div key={i} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                    <span className="w-5 text-center text-[13px] font-semibold text-muted-foreground">
                       {i + 1}
                     </span>
                     {itemCover ? (
                       <img
                         src={itemCover}
                         alt={itemTitle}
-                        className="h-12 w-9 shrink-0 rounded object-cover"
+                        className="h-11 w-8 shrink-0 rounded object-cover shadow-sm ring-1 ring-border/50"
                       />
                     ) : (
-                      <div className="flex h-12 w-9 shrink-0 items-center justify-center rounded bg-accent">
+                      <div className="flex h-11 w-8 shrink-0 items-center justify-center rounded bg-muted ring-1 ring-border/50">
                         <BookOpen className="h-3 w-3 text-muted-foreground" />
                       </div>
                     )}
                     <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-                      <span className="text-sm font-medium text-foreground truncate">{itemTitle}</span>
+                      <span className="text-[13px] font-medium text-foreground truncate">{itemTitle}</span>
                       <span className="text-xs text-muted-foreground truncate">{itemAuthor}</span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       {tags.map((tag, j) => (
-                        <Badge key={j} variant="outline" className="text-xs">
+                        <Badge key={j} variant="outline" className="text-[11px] px-2 py-0 h-5">
                           {tag}
                         </Badge>
                       ))}
-                      <span className="text-sm font-medium text-foreground">
+                      <span className="text-[13px] font-semibold text-foreground tabular-nums">
                         {formatShortDuration(itemReadTime)}
                       </span>
                     </div>
@@ -280,20 +277,20 @@ export function StatsView() {
         </Card>
       )}
 
-      {/* Reading preferences */}
+      {/* Preferences */}
       {(preferCategories.length > 0 || preferTimeWord) && (
-        <Card className="border-border">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold text-foreground">
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-2 px-5 pt-5">
+            <CardTitle className="text-[15px] font-semibold text-foreground">
               {"阅读偏好"}
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col gap-4">
+          <CardContent className="px-5 pb-5 flex flex-col gap-4">
             {preferTimeWord && (
-              <p className="text-sm text-muted-foreground">{preferTimeWord}</p>
+              <p className="text-[13px] text-muted-foreground">{preferTimeWord}</p>
             )}
             {preferCategories.length > 0 && (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2.5">
                 {preferCategories.map((cat, i) => {
                   const catTitle = (cat.categoryTitle || '') as string
                   const val = (cat.val || 0) as number
@@ -302,16 +299,16 @@ export function StatsView() {
 
                   return (
                     <div key={i} className="flex items-center gap-3">
-                      <span className="w-20 shrink-0 text-sm text-foreground truncate">
+                      <span className="w-16 shrink-0 text-[13px] text-foreground truncate">
                         {catTitle}
                       </span>
-                      <div className="flex-1 h-5 bg-muted rounded-full overflow-hidden">
+                      <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-primary/60 rounded-full transition-all"
-                          style={{ width: `${Math.max(val * 100, 4)}%` }}
+                          className="h-full bg-primary/70 rounded-full transition-all duration-500"
+                          style={{ width: `${Math.max(val * 100, 3)}%` }}
                         />
                       </div>
-                      <span className="shrink-0 text-xs text-muted-foreground">
+                      <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
                         {readingCount > 0
                           ? `${readingCount}本 / ${formatShortDuration(readingTime)}`
                           : formatShortDuration(readingTime)}
@@ -333,28 +330,27 @@ function StatMiniCard({
   label,
   value,
   loading,
+  accent,
 }: {
   icon: React.ElementType
   label: string
   value: string
   loading: boolean
+  accent?: boolean
 }) {
   return (
-    <Card className="border-border bg-card">
-      <CardContent className="flex flex-col gap-2 p-5">
-        <Icon className="h-5 w-5 text-primary" />
+    <Card className={`border-0 shadow-sm transition-all hover:shadow-md ${accent ? 'bg-primary/5' : 'bg-card'}`}>
+      <CardContent className="flex flex-col gap-2.5 p-4">
+        <Icon className={`h-[18px] w-[18px] ${accent ? 'text-primary' : 'text-muted-foreground'}`} />
         <div className="flex flex-col gap-0.5">
           <span className="text-xs text-muted-foreground">{label}</span>
           {loading ? (
             <Skeleton className="h-6 w-16" />
           ) : (
-            <span className="text-xl font-semibold tracking-tight text-foreground">{value}</span>
+            <span className="text-lg font-semibold tracking-tight text-foreground">{value}</span>
           )}
         </div>
       </CardContent>
     </Card>
   )
 }
-
-// Need Button import for mode selector
-import { Button } from '@/components/ui/button'
