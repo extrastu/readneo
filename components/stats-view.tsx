@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Clock, BookOpen, Calendar, TrendingUp } from 'lucide-react'
+import { Clock, BookOpen, Calendar, TrendingUp, Flame } from 'lucide-react'
 import {
   XAxis,
   YAxis,
@@ -14,7 +14,7 @@ import {
   AreaChart,
   Area,
 } from 'recharts'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 function formatDuration(seconds: number): string {
   if (!seconds) return '0 分钟'
@@ -49,6 +49,78 @@ export function StatsView() {
   const overallReadTime = (overallData?.totalReadTime || 0) as number
 
   const readTimes = (detailData?.readTimes || {}) as Record<string, number>
+
+  // Build heatmap data for last 365 days
+  const heatmapData = useMemo(() => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const days: Array<{ date: Date; dateStr: string; minutes: number; level: number }> = []
+    
+    // Generate last 365 days
+    for (let i = 364; i >= 0; i--) {
+      const d = new Date(today)
+      d.setDate(d.getDate() - i)
+      const ts = Math.floor(d.getTime() / 1000)
+      
+      // Find matching readTime entry (API uses day-start timestamps)
+      let minutes = 0
+      for (const [key, seconds] of Object.entries(readTimes)) {
+        const keyTs = Number(key)
+        const keyDate = new Date(keyTs * 1000)
+        if (
+          keyDate.getFullYear() === d.getFullYear() &&
+          keyDate.getMonth() === d.getMonth() &&
+          keyDate.getDate() === d.getDate()
+        ) {
+          minutes = Math.round(seconds / 60)
+          break
+        }
+      }
+
+      // Level 0-4 based on reading minutes
+      let level = 0
+      if (minutes > 0) level = 1
+      if (minutes >= 30) level = 2
+      if (minutes >= 60) level = 3
+      if (minutes >= 120) level = 4
+
+      days.push({
+        date: d,
+        dateStr: d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }),
+        minutes,
+        level,
+      })
+    }
+    return days
+  }, [readTimes])
+
+  // Group by weeks for grid layout
+  const weeks = useMemo(() => {
+    const result: typeof heatmapData[] = []
+    let week: typeof heatmapData = []
+    
+    // Pad first week with empty slots
+    const firstDay = heatmapData[0]?.date.getDay() || 0
+    for (let i = 0; i < firstDay; i++) {
+      week.push({ date: new Date(0), dateStr: '', minutes: -1, level: -1 })
+    }
+    
+    for (const day of heatmapData) {
+      week.push(day)
+      if (week.length === 7) {
+        result.push(week)
+        week = []
+      }
+    }
+    if (week.length > 0) {
+      result.push(week)
+    }
+    return result
+  }, [heatmapData])
+
+  const totalDaysWithReading = heatmapData.filter((d) => d.minutes > 0).length
+  const totalMinutesYear = heatmapData.reduce((acc, d) => acc + Math.max(0, d.minutes), 0)
+
   const readTimesEntries = Object.entries(readTimes)
     .map(([ts, seconds]) => ({
       timestamp: Number(ts),
@@ -140,6 +212,74 @@ export function StatsView() {
             : `相比上个周期下降 ${Math.round(Math.abs(compare) * 100)}%`}
         </div>
       )}
+
+      {/* Heatmap */}
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-2 px-5 pt-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Flame className="h-4 w-4 text-primary" />
+              <CardTitle className="text-[15px] font-semibold text-foreground">
+                {"年度阅读热力图"}
+              </CardTitle>
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {`过去一年 ${totalDaysWithReading} 天有阅读，共 ${Math.round(totalMinutesYear / 60)} 小时`}
+            </span>
+          </div>
+        </CardHeader>
+        <CardContent className="px-5 pb-5">
+          {isLoading ? (
+            <Skeleton className="h-32 w-full" />
+          ) : (
+            <div className="flex flex-col gap-3">
+              <div className="overflow-x-auto pb-2">
+                <div className="flex gap-[3px]" style={{ minWidth: 'max-content' }}>
+                  {weeks.map((week, wi) => (
+                    <div key={wi} className="flex flex-col gap-[3px]">
+                      {week.map((day, di) => (
+                        <div
+                          key={di}
+                          className={`w-[11px] h-[11px] rounded-[2px] transition-colors ${
+                            day.level === -1
+                              ? 'bg-transparent'
+                              : day.level === 0
+                              ? 'bg-muted hover:ring-1 hover:ring-border'
+                              : day.level === 1
+                              ? 'bg-primary/20 hover:ring-1 hover:ring-primary/40'
+                              : day.level === 2
+                              ? 'bg-primary/40 hover:ring-1 hover:ring-primary/60'
+                              : day.level === 3
+                              ? 'bg-primary/60 hover:ring-1 hover:ring-primary/80'
+                              : 'bg-primary hover:ring-1 hover:ring-primary'
+                          }`}
+                          title={day.level >= 0 ? `${day.dateStr}: ${day.minutes} 分钟` : undefined}
+                        />
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <span>{"一月"}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span>{"少"}</span>
+                  <div className="flex gap-[3px]">
+                    <div className="w-[11px] h-[11px] rounded-[2px] bg-muted" />
+                    <div className="w-[11px] h-[11px] rounded-[2px] bg-primary/20" />
+                    <div className="w-[11px] h-[11px] rounded-[2px] bg-primary/40" />
+                    <div className="w-[11px] h-[11px] rounded-[2px] bg-primary/60" />
+                    <div className="w-[11px] h-[11px] rounded-[2px] bg-primary" />
+                  </div>
+                  <span>{"多"}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Stat badges */}
       {readStatItems.length > 0 && (

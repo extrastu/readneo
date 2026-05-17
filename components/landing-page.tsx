@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Script from 'next/script'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
@@ -108,10 +109,38 @@ export function LandingPage() {
     }
   }
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'readNeo',
+    description: '连接微信读书，可视化你的阅读数据。管理书架、追踪阅读统计、导出笔记划线。',
+    url: 'https://readneo.vercel.app',
+    applicationCategory: 'ProductivityApplication',
+    operatingSystem: 'Web',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'CNY',
+    },
+    featureList: [
+      '书架同步与管理',
+      '阅读时长统计',
+      '笔记划线导出',
+      'Flomo 同步',
+      'Notion 同步',
+      '个性化推荐',
+    ],
+  }
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Nav */}
-      <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">
+    <>
+      <Script
+        id="json-ld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="min-h-screen bg-background">
+        <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5">
           <div className="flex items-center gap-2.5">
             <img src="/icon.svg" alt="readNeo" className="h-8 w-8 rounded-lg shadow-sm" />
@@ -358,6 +387,7 @@ export function LandingPage() {
           </div>
         </div>
       </footer>
-    </div>
+      </div>
+    </>
   )
 }

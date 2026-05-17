@@ -8,7 +8,7 @@ import {
   Library,
   Sparkles,
   Search,
-  User,
+  Settings,
 } from 'lucide-react'
 
 const navItems = [
@@ -16,7 +16,7 @@ const navItems = [
   { href: '/shelf', label: '书架', icon: Library },
   { href: '/discover', label: '发现', icon: Sparkles },
   { href: '/search', label: '搜索', icon: Search },
-  { href: '/profile', label: '我的', icon: User },
+  { href: '/settings', label: '设置', icon: Settings },
 ]
 
 export function MobileNav() {
