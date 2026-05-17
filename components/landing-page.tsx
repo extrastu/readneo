@@ -17,6 +17,7 @@ import {
   PenLine,
   TrendingUp,
   FileText,
+  Github,
 } from 'lucide-react'
 import { useWeReadStore } from '@/lib/store'
 
@@ -112,11 +113,21 @@ export function LandingPage() {
       {/* Nav */}
       <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-lg">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <img src="/icon.svg" alt="readNeo" className="h-8 w-8 rounded-lg" />
             <span className="text-lg font-semibold tracking-tight text-foreground">readNeo</span>
           </div>
-          <Button
+          <div className="flex items-center gap-3">
+            <a
+              href="https://github.com/extrastu/readneo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="GitHub"
+            >
+              <Github className="h-5 w-5" />
+            </a>
+            <Button
             size="sm"
             onClick={() => {
               setShowSetup(true)
@@ -333,6 +344,15 @@ export function LandingPage() {
             <p className="text-xs text-muted-foreground">
               {"readNeo 是一个开源项目，数据通过微信读书 Skill API 获取，仅存储在你的浏览器本地。"}
             </p>
+            <a
+              href="https://github.com/extrastu/readneo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Github className="h-3.5 w-3.5" />
+              {"GitHub"}
+            </a>
           </div>
         </div>
       </footer>

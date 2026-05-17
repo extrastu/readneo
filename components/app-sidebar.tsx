@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { useWeReadStore } from '@/lib/store'
 import {
@@ -30,7 +30,13 @@ const navItems = [
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
   const clearApiKey = useWeReadStore((s) => s.clearApiKey)
+
+  function handleLogout() {
+    clearApiKey()
+    router.push('/')
+  }
 
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-full w-60 flex-col border-r border-border bg-card">
@@ -89,7 +95,7 @@ export function AppSidebar() {
           variant="ghost"
           size="sm"
           className="justify-start gap-3 px-3 text-muted-foreground hover:text-destructive"
-          onClick={clearApiKey}
+          onClick={handleLogout}
         >
           <LogOut className="h-4.5 w-4.5" />
           {"退出登录"}

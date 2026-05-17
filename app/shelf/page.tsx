@@ -1,28 +1,31 @@
 'use client'
 
 import { useWeReadStore } from '@/lib/store'
-import { SetupScreen } from '@/components/setup-screen'
 import { AppShell } from '@/components/app-shell'
 import { ShelfView } from '@/components/shelf-view'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function ShelfPage() {
   const isConfigured = useWeReadStore((s) => s.isConfigured)
   const [mounted, setMounted] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  if (!mounted) {
+  useEffect(() => {
+    if (mounted && !isConfigured) router.push('/')
+  }, [mounted, isConfigured, router])
+
+  if (!mounted || !isConfigured) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     )
   }
-
-  if (!isConfigured) return <SetupScreen />
 
   return (
     <AppShell>

@@ -1,35 +1,46 @@
-# readneo
+# readNeo
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+你的微信读书数据面板 -- 连接微信读书 Skill API，可视化书架、阅读统计、笔记划线，一键导出到 Notion 和 Flomo。
 
-## Built with v0
+## 功能
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
+- **书架管理** -- 同步微信读书书架，浏览全部藏书与阅读进度
+- **阅读统计** -- 可视化阅读时长、天数、趋势图表，洞察阅读习惯
+- **笔记与划线** -- 按书分类浏览高亮和笔记，支持复制与跳转原文
+- **书城搜索** -- 搜索微信读书书城，按类型筛选电子书、网文、听书
+- **个性化推荐** -- 基于阅读偏好获取微信读书的书籍推荐
+- **书评点评** -- 查看热门书评与个人想法
+- **数据导出** -- 导出为 Markdown ZIP，同步到 Flomo 或 Notion
 
-[Continue working on v0 →](https://v0.app/chat/projects/prj_1eEKhaM7Og7MYwhmQzw4oH1AZQ6C)
+## 快速开始
 
-## Getting Started
+1. 打开微信读书 App
+2. 进入「我」→「设置」→「微信读书 Skill」
+3. 滚到底部复制生成的 API Key
+4. 打开 readNeo，粘贴 API Key 即可使用
 
-First, run the development server:
+## 技术栈
+
+- [Next.js 16](https://nextjs.org) -- React 全栈框架
+- [Tailwind CSS v4](https://tailwindcss.com) -- 原子化 CSS
+- [shadcn/ui](https://ui.shadcn.com) -- 组件库
+- [Recharts](https://recharts.org) -- 数据可视化
+- [SWR](https://swr.vercel.app) -- 数据请求
+- [Zustand](https://zustand.docs.pmnd.rs) -- 状态管理
+
+## 隐私
+
+所有数据仅存储在浏览器本地（localStorage），不会上传至任何服务器。API 请求通过服务端代理转发以确保安全性。
+
+## 开发
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+打开 [http://localhost:3000](http://localhost:3000) 查看。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 许可
 
-## Learn More
-
-To learn more, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
-
-<a href="https://v0.app/chat/api/kiro/clone/extrastu/readneo" alt="Open in Kiro"><img src="https://pdgvvgmkdvyeydso.public.blob.vercel-storage.com/open%20in%20kiro.svg?sanitize=true" /></a>
+MIT

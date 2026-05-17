@@ -16,6 +16,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export function SettingsView() {
   const {
@@ -40,6 +41,12 @@ export function SettingsView() {
   const [newNotionToken, setNewNotionToken] = useState('')
   const [newNotionDbId, setNewNotionDbId] = useState('')
   const [notionSaved, setNotionSaved] = useState(false)
+  const router = useRouter()
+
+  function handleLogout() {
+    clearApiKey()
+    router.push('/')
+  }
 
   function handleUpdateKey() {
     if (!newKey.trim()) return
@@ -302,7 +309,7 @@ export function SettingsView() {
           <Button
             variant="destructive"
             className="w-fit"
-            onClick={clearApiKey}
+            onClick={handleLogout}
           >
             <LogOut className="mr-2 h-4 w-4" />
             {"退出并清除所有数据"}
