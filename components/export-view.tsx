@@ -213,11 +213,20 @@ export function ExportView() {
           const chUid = hl.chapterUid as number
           const chapter = chapterMap.get(chUid) || ''
           const content = `#微信读书 #${sanitize(title)}\n\n> ${text}${chapter ? `\n\n-- ${chapter}` : ''}`
-          await fetch(flomoApiUrl, {
+          const flomoRes = await fetch(flomoApiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content }),
           })
+          const flomoJson = await flomoRes.json().catch(() => ({}))
+          if (flomoJson.code === -1) {
+            setFlomoProgress((p) => ({
+              ...p,
+              status: 'error',
+              message: `已同步 ${totalSynced} 条。Flomo 提示：${flomoJson.message || '已达每日 API 上限 100 条'}`,
+            }))
+            return
+          }
           totalSynced++
           // Rate limiting: 1s between requests
           await new Promise((r) => setTimeout(r, 1000))
@@ -232,11 +241,20 @@ export function ExportView() {
           let content = `#微信读书 #${sanitize(title)} #想法\n\n`
           if (abstract) content += `> ${abstract}\n\n`
           content += content_text
-          await fetch(flomoApiUrl, {
+          const flomoRes2 = await fetch(flomoApiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content }),
           })
+          const flomoJson2 = await flomoRes2.json().catch(() => ({}))
+          if (flomoJson2.code === -1) {
+            setFlomoProgress((p) => ({
+              ...p,
+              status: 'error',
+              message: `已同步 ${totalSynced} 条。Flomo 提示：${flomoJson2.message || '已达每日 API 上限 100 条'}`,
+            }))
+            return
+          }
           totalSynced++
           await new Promise((r) => setTimeout(r, 1000))
         }
