@@ -215,7 +215,7 @@ export function SettingsView() {
                     </a>
                   </li>
                   <li>{"点击「New integration」创建一个新集成"}</li>
-                  <li>{"名称填写 ReadFlow，类型选择 Internal"}</li>
+                  <li>{"名称填写 readNeo，类型选择 Internal"}</li>
                   <li>{"创建后复制 Internal Integration Secret（以 ntn_ 开头）"}</li>
                 </ol>
                 <p className="font-medium text-foreground/80 mt-2">{"第二步：创建数据库并授权"}</p>
@@ -234,7 +234,7 @@ export function SettingsView() {
                     <span className="font-mono text-xs bg-muted px-1 py-0.5 rounded">Chapter</span>
                     {"（文本）"}
                   </li>
-                  <li>{"点击数据库右上角「...」→「Connections」→ 搜索并添加 ReadFlow"}</li>
+                  <li>{"点击数据库右上角「...」→「Connections」→ 搜索并添加 readNeo"}</li>
                   <li>{"复制数据库链接，提取其中的 Database ID（32位字符串，格式如 abc123...def456）"}</li>
                 </ol>
                 <p className="text-xs text-muted-foreground/80 mt-1">

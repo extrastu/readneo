@@ -7,7 +7,7 @@ const _geist = Geist({ subsets: ['latin'] })
 const _geistMono = Geist_Mono({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'ReadFlow - 微信读书数据面板',
+  title: 'readNeo - 微信读书数据面板',
   description: '连接微信读书，可视化你的阅读数据、书架、笔记与统计',
   generator: 'v0.app',
   icons: {

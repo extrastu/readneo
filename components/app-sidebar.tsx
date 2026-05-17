@@ -35,8 +35,8 @@ export function AppSidebar() {
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-full w-60 flex-col border-r border-border bg-card">
       <div className="flex items-center gap-3 px-6 py-6">
-        <img src="/icon.svg" alt="ReadFlow" className="h-9 w-9 rounded-xl" />
-        <span className="text-lg font-semibold tracking-tight text-foreground">ReadFlow</span>
+        <img src="/icon.svg" alt="readNeo" className="h-9 w-9 rounded-xl" />
+        <span className="text-lg font-semibold tracking-tight text-foreground">readNeo</span>
       </div>
 
       <nav className="flex flex-1 flex-col gap-1 px-3">

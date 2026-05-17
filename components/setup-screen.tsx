@@ -43,9 +43,9 @@ export function SetupScreen() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
         <div className="mb-10 flex flex-col items-center gap-4 text-center">
-          <img src="/icon.svg" alt="ReadFlow" className="h-16 w-16 rounded-2xl" />
+          <img src="/icon.svg" alt="readNeo" className="h-16 w-16 rounded-2xl" />
           <h1 className="text-3xl font-semibold tracking-tight text-foreground text-balance">
-            ReadFlow
+            readNeo
           </h1>
           <p className="text-muted-foreground leading-relaxed">
             {"连接你的微信读书账户，开启全新的阅读数据体验"}

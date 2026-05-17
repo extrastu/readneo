@@ -169,7 +169,7 @@ export function ExportView() {
 
       setMdProgress((p) => ({ ...p, status: 'generating', message: '正在生成 ZIP 文件...' }))
       const blob = await zip.generateAsync({ type: 'blob' })
-      saveAs(blob, `ReadFlow-笔记导出-${new Date().toISOString().slice(0, 10)}.zip`)
+      saveAs(blob, `readNeo-笔记导出-${new Date().toISOString().slice(0, 10)}.zip`)
 
       setMdProgress({ total, current: total, currentBook: '', status: 'done', message: `成功导出 ${total} 本书的笔记` })
     } catch (err) {
