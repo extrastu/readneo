@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import Script from 'next/script'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -147,6 +148,12 @@ export function LandingPage() {
             <span className="text-[15px] font-semibold tracking-tight text-foreground">readNeo</span>
           </div>
           <div className="flex items-center gap-3">
+            <Link
+              href="/skills/public"
+              className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {"Skill 灵感"}
+            </Link>
             <a
               href="https://github.com/extrastu/readneo"
               target="_blank"
@@ -313,7 +320,7 @@ export function LandingPage() {
                   {"连接你的微信读书"}
                 </h2>
                 <p className="mb-5 text-[13px] text-muted-foreground text-center">
-                  {"输入 API Key 验证后即可开始使用"}
+                  {"输入 API Key 验证后���可开始使用"}
                 </p>
                 <form onSubmit={handleSubmit} className="flex w-full flex-col gap-3">
                   <div className="relative">
