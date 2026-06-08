@@ -157,7 +157,6 @@ export function DashboardView() {
           label="书架藏书"
           value={`${totalBooks} 本`}
           loading={shelfLoading}
-          accent
         />
         <StatCard
           icon={Clock}
@@ -245,7 +244,7 @@ export function DashboardView() {
             })}
           </div>
         ) : (
-          <Card className="border-0 shadow-sm bg-muted/30">
+          <Card className="border-0 shadow-sm bg-card">
             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted">
                 <BookOpen className="h-4 w-4 text-muted-foreground" />
@@ -340,7 +339,7 @@ export function DashboardView() {
             })}
           </div>
         ) : (
-          <Card className="border-0 shadow-sm bg-muted/30">
+          <Card className="border-0 shadow-sm bg-card">
             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted">
                 <BookOpen className="h-4 w-4 text-muted-foreground" />

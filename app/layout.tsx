@@ -1,10 +1,6 @@
 import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
-
-const _geist = Geist({ subsets: ['latin'] })
-const _geistMono = Geist_Mono({ subsets: ['latin'] })
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://readneo.vercel.app'
 
@@ -92,8 +88,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#faf8f5' },
-    { media: '(prefers-color-scheme: dark)', color: '#1c1917' },
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#171715' },
   ],
   width: 'device-width',
   initialScale: 1,
