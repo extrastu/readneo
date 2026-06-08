@@ -223,8 +223,6 @@ export function LandingPage() {
             </div>
           </div>
         </div>
-        {/* Gradient orb */}
-        <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[400px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/4 blur-3xl" />
       </section>
 
       {/* Features */}
