@@ -318,7 +318,7 @@ export function LandingPage() {
                   {"连接你的微信读书"}
                 </h2>
                 <p className="mb-5 text-[13px] text-muted-foreground text-center">
-                  {"输入 API Key 验证后���可开始使用"}
+                  {"输入 API Key 验证后即可开始使用"}
                 </p>
                 <form onSubmit={handleSubmit} className="flex w-full flex-col gap-3">
                   <div className="relative">
