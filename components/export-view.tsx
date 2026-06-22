@@ -112,6 +112,38 @@ function sanitize(name: string): string {
   return name.replace(/[/\\:*?"<>|]/g, '_').trim() || 'untitled'
 }
 
+function getResponseErrorMessage(data: unknown, status: number): string {
+  if (
+    data &&
+    typeof data === 'object' &&
+    'error' in data &&
+    typeof data.error === 'string' &&
+    data.error.trim()
+  ) {
+    return data.error
+  }
+
+  return `Notion API 请求失败（HTTP ${status}）`
+}
+
+async function createNotionPage(
+  token: string,
+  databaseId: string,
+  properties: Record<string, unknown>,
+  bookTitle: string,
+) {
+  const response = await fetch('/api/notion', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, databaseId, properties }),
+  })
+
+  const data: unknown = await response.json().catch(() => null)
+  if (!response.ok) {
+    throw new Error(`《${bookTitle}》同步到 Notion 失败：${getResponseErrorMessage(data, response.status)}`)
+  }
+}
+
 export function ExportView() {
   const {
     apiKey,
@@ -306,21 +338,18 @@ export function ExportView() {
           const chUid = hl.chapterUid as number
           const chapter = chapterMap.get(chUid) || ''
 
-          await fetch('/api/notion', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              token: notionToken,
-              databaseId: notionDatabaseId,
-              properties: {
-                Title: { title: [{ text: { content: title } }] },
-                Author: { rich_text: [{ text: { content: author } }] },
-                Type: { select: { name: '划线' } },
-                Content: { rich_text: [{ text: { content: text.slice(0, 2000) } }] },
-                Chapter: { rich_text: [{ text: { content: chapter } }] },
-              },
-            }),
-          })
+          await createNotionPage(
+            notionToken,
+            notionDatabaseId,
+            {
+              Title: { title: [{ text: { content: title } }] },
+              Author: { rich_text: [{ text: { content: author } }] },
+              Type: { select: { name: '划线' } },
+              Content: { rich_text: [{ text: { content: text.slice(0, 2000) } }] },
+              Chapter: { rich_text: [{ text: { content: chapter } }] },
+            },
+            title,
+          )
           totalSynced++
           await new Promise((r) => setTimeout(r, 1000))
         }
@@ -332,21 +361,18 @@ export function ExportView() {
           const chapterName = (review.chapterName || '') as string
           if (!content) continue
 
-          await fetch('/api/notion', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              token: notionToken,
-              databaseId: notionDatabaseId,
-              properties: {
-                Title: { title: [{ text: { content: title } }] },
-                Author: { rich_text: [{ text: { content: author } }] },
-                Type: { select: { name: '想法' } },
-                Content: { rich_text: [{ text: { content: content.slice(0, 2000) } }] },
-                Chapter: { rich_text: [{ text: { content: chapterName } }] },
-              },
-            }),
-          })
+          await createNotionPage(
+            notionToken,
+            notionDatabaseId,
+            {
+              Title: { title: [{ text: { content: title } }] },
+              Author: { rich_text: [{ text: { content: author } }] },
+              Type: { select: { name: '想法' } },
+              Content: { rich_text: [{ text: { content: content.slice(0, 2000) } }] },
+              Chapter: { rich_text: [{ text: { content: chapterName } }] },
+            },
+            title,
+          )
           totalSynced++
           await new Promise((r) => setTimeout(r, 1000))
         }
