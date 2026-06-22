@@ -17,6 +17,7 @@ import {
   Lightbulb,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 const navItems = [
   { href: '/', label: '概览', icon: LayoutDashboard },
@@ -94,6 +95,7 @@ export function AppSidebar() {
           <Settings className={cn('h-[18px] w-[18px]', pathname === '/settings' && 'text-sidebar-primary')} />
           {"设置"}
         </Link>
+        <ThemeToggle />
         <Button
           variant="ghost"
           size="sm"

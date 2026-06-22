@@ -32,7 +32,7 @@ export function NotesView() {
       {isLoading ? (
         <div className="flex flex-col gap-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} className="border-0 shadow-sm">
+            <Card key={i} className="border shadow-sm">
               <CardContent className="p-5">
                 <Skeleton className="mb-3 h-5 w-48" />
                 <Skeleton className="mb-2 h-4 w-full" />
@@ -42,7 +42,7 @@ export function NotesView() {
           ))}
         </div>
       ) : allNotebooks.length === 0 ? (
-        <Card className="border-0 shadow-sm bg-muted/30">
+        <Card className="border shadow-sm bg-muted/30">
           <CardContent className="flex flex-col items-center justify-center py-20 text-center">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
               <Highlighter className="h-5 w-5 text-muted-foreground" />
@@ -77,7 +77,7 @@ function NotebookCard({ notebook }: { notebook: Record<string, unknown> }) {
   const progress = (notebook.readingProgress || 0) as number
 
   return (
-    <Card className="border-0 shadow-sm overflow-hidden transition-shadow hover:shadow-md">
+    <Card className="border shadow-sm overflow-hidden transition-shadow hover:shadow-md">
       <CardContent className="p-0">
         <button
           className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-muted/30"

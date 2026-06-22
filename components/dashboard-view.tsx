@@ -32,7 +32,7 @@ function StatCard({
   accent?: boolean
 }) {
   return (
-    <Card className={`border-0 shadow-sm transition-all hover:shadow-md ${accent ? 'bg-primary/5' : 'bg-card'}`}>
+    <Card className={`border shadow-sm transition-all hover:shadow-md ${accent ? 'bg-primary/5' : 'bg-card'}`}>
       <CardContent className="flex items-center gap-4 p-4 sm:p-5">
         <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${accent ? 'bg-primary/15' : 'bg-muted'}`}>
           <Icon className={`h-[18px] w-[18px] ${accent ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -206,7 +206,7 @@ export function DashboardView() {
             {recentBooks.slice(0, 6).map((book: Record<string, unknown>, i: number) => {
               const bookInfo = (book.bookInfo || book) as Record<string, unknown>
               const title = (bookInfo.title || '未知书名') as string
-              const author = (bookInfo.author || '未知作者') as string
+              const author = (bookInfo.author || '未知��者') as string
               const cover = (bookInfo.cover || bookInfo.coverUrl || '') as string
               const bookId = (bookInfo.bookId || '') as string
 
@@ -244,7 +244,7 @@ export function DashboardView() {
             })}
           </div>
         ) : (
-          <Card className="border-0 shadow-sm bg-card">
+          <Card className="border shadow-sm bg-card">
             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted">
                 <BookOpen className="h-4 w-4 text-muted-foreground" />
@@ -271,7 +271,7 @@ export function DashboardView() {
         {(shelfLoading || progressLoading) && booksWithProgress.length === 0 ? (
           <div className="flex flex-col gap-3">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Card key={i} className="border-0 shadow-sm">
+              <Card key={i} className="border shadow-sm">
                 <CardContent className="flex gap-4 p-4">
                   <Skeleton className="h-16 w-12 shrink-0 rounded-md" />
                   <div className="flex flex-1 flex-col gap-2">
@@ -293,7 +293,7 @@ export function DashboardView() {
 
               return (
                 <Link key={bookId || i} href={bookId ? `/book/${bookId}` : '#'}>
-                  <Card className="border-0 shadow-sm hover:shadow-md transition-all cursor-pointer group">
+                  <Card className="border shadow-sm hover:shadow-md transition-all cursor-pointer group">
                     <CardContent className="flex gap-4 p-4">
                       <div className="relative h-16 w-12 shrink-0 overflow-hidden rounded-md bg-muted ring-1 ring-border/50">
                         {cover ? (
@@ -339,7 +339,7 @@ export function DashboardView() {
             })}
           </div>
         ) : (
-          <Card className="border-0 shadow-sm bg-card">
+          <Card className="border shadow-sm bg-card">
             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted">
                 <BookOpen className="h-4 w-4 text-muted-foreground" />

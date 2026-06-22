@@ -78,7 +78,7 @@ function BookGrid({ books, loading }: { books: Record<string, unknown>[]; loadin
 
   if (books.length === 0) {
     return (
-      <Card className="border-0 shadow-sm bg-muted/30">
+      <Card className="border shadow-sm bg-muted/30">
         <CardContent className="flex flex-col items-center justify-center py-20 text-center">
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
             <BookOpen className="h-5 w-5 text-muted-foreground" />

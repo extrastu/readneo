@@ -214,7 +214,7 @@ export function StatsView() {
       )}
 
       {/* Heatmap */}
-      <Card className="border-0 shadow-sm">
+      <Card className="border shadow-sm">
         <CardHeader className="pb-2 px-5 pt-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -293,7 +293,7 @@ export function StatsView() {
       )}
 
       {/* Chart */}
-      <Card className="border-0 shadow-sm">
+      <Card className="border shadow-sm">
         <CardHeader className="pb-2 px-5 pt-5">
           <CardTitle className="text-[15px] font-semibold text-foreground">
             {`${modeLabels[mode]}阅读时长`}
@@ -307,19 +307,19 @@ export function StatsView() {
               <AreaChart data={readTimesEntries}>
                 <defs>
                   <linearGradient id="colorMinutes" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="oklch(0.48 0.14 42)" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="oklch(0.48 0.14 42)" stopOpacity={0} />
+                    <stop offset="5%" stopColor="var(--chart-2)" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="var(--chart-2)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <XAxis
                   dataKey="date"
-                  tick={{ fontSize: 11, fill: 'oklch(0.45 0.015 50)' }}
+                  tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }}
                   axisLine={false}
                   tickLine={false}
                   dy={8}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: 'oklch(0.45 0.015 50)' }}
+                  tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }}
                   axisLine={false}
                   tickLine={false}
                   dx={-8}
@@ -327,11 +327,12 @@ export function StatsView() {
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: 'oklch(1 0 0)',
-                    border: '1px solid oklch(0.92 0.008 75)',
+                    backgroundColor: 'var(--popover)',
+                    border: '1px solid var(--border)',
                     borderRadius: '8px',
                     fontSize: 13,
-                    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+                    color: 'var(--popover-foreground)',
+                    boxShadow: 'var(--shadow)',
                   }}
                   formatter={(value: number) => [`${value} 分钟`, '阅读时长']}
                   labelFormatter={(_: unknown, payload: Array<Record<string, unknown>>) => {
@@ -345,7 +346,7 @@ export function StatsView() {
                 <Area
                   type="monotone"
                   dataKey="minutes"
-                  stroke="oklch(0.48 0.14 42)"
+                  stroke="var(--chart-2)"
                   strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#colorMinutes)"
@@ -362,7 +363,7 @@ export function StatsView() {
 
       {/* Top books */}
       {readLongest.length > 0 && (
-        <Card className="border-0 shadow-sm">
+        <Card className="border shadow-sm">
           <CardHeader className="pb-2 px-5 pt-5">
             <CardTitle className="text-[15px] font-semibold text-foreground">
               {"读得最多"}
@@ -419,7 +420,7 @@ export function StatsView() {
 
       {/* Preferences */}
       {(preferCategories.length > 0 || preferTimeWord) && (
-        <Card className="border-0 shadow-sm">
+        <Card className="border shadow-sm">
           <CardHeader className="pb-2 px-5 pt-5">
             <CardTitle className="text-[15px] font-semibold text-foreground">
               {"阅读偏好"}
@@ -479,7 +480,7 @@ function StatMiniCard({
   accent?: boolean
 }) {
   return (
-    <Card className={`border-0 shadow-sm transition-all hover:shadow-md ${accent ? 'bg-primary/5' : 'bg-card'}`}>
+    <Card className={`border shadow-sm transition-all hover:shadow-md ${accent ? 'bg-primary/5' : 'bg-card'}`}>
       <CardContent className="flex flex-col gap-2.5 p-4">
         <Icon className={`h-[18px] w-[18px] ${accent ? 'text-primary' : 'text-muted-foreground'}`} />
         <div className="flex flex-col gap-0.5">

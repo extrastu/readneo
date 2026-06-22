@@ -116,6 +116,9 @@ importers:
       file-saver:
         specifier: ^2.0.5
         version: 2.0.5
+      geist:
+        specifier: ^1.7.2
+        version: 1.7.2(next@16.2.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
       input-otp:
         specifier: 1.4.2
         version: 1.4.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -1422,6 +1425,11 @@ packages:
 
   fraction.js@5.3.4:
     resolution: {integrity: sha512-1X1NTtiJphryn/uLQz3whtY6jK3fTqoE3ohKs0tT+Ujr1W59oopxmoEh7Lu5p6vBaPbgoM0bzveAW4Qi5RyWDQ==}
+
+  geist@1.7.2:
+    resolution: {integrity: sha512-Gu5lDFa3pLRyoBlBPf0QIFHVdWAnpco7fS1bJm41jyLPFoguBgiubseUN2oLXMgqZ7uxAxDoXcHMhCY/fOTTgg==}
+    peerDependencies:
+      next: '>=13.2.0'
 
   get-nonce@1.0.1:
     resolution: {integrity: sha512-FJhYRoDaiatfEkUK8HKlicmu/3SGFD51q3itKDGoSTysQJBnfOcxU5GxnhE1E6soB76MbT0MBtnKJuXyAx+96Q==}
@@ -2960,6 +2968,10 @@ snapshots:
   file-saver@2.0.5: {}
 
   fraction.js@5.3.4: {}
+
+  geist@1.7.2(next@16.2.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)):
+    dependencies:
+      next: 16.2.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
 
   get-nonce@1.0.1: {}
 

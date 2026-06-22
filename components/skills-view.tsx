@@ -159,7 +159,7 @@ export function SkillsView() {
       </div>
 
       {/* Intro Card */}
-      <Card className="border-0 shadow-sm bg-gradient-to-br from-primary/5 to-primary/10">
+      <Card className="border shadow-sm bg-gradient-to-br from-primary/5 to-primary/10">
         <CardContent className="flex flex-col gap-3 p-5">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
@@ -183,7 +183,7 @@ export function SkillsView() {
       {/* Skills Grid */}
       <div className="grid gap-4 sm:grid-cols-2">
         {skills.map((skill) => (
-          <Card key={skill.id} className="border-0 shadow-sm group">
+          <Card key={skill.id} className="border shadow-sm group">
             <CardHeader className="pb-2 px-5 pt-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
@@ -237,7 +237,7 @@ export function SkillsView() {
       </div>
 
       {/* Footer Tips */}
-      <Card className="border-0 shadow-sm">
+      <Card className="border shadow-sm">
         <CardContent className="p-5">
           <h3 className="text-sm font-medium text-foreground mb-3">{"使用技巧"}</h3>
           <ul className="space-y-2 text-[13px] text-muted-foreground">

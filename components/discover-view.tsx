@@ -78,7 +78,7 @@ export function DiscoverView() {
       )}
 
       {!isLoading && displayBooks.length === 0 && (
-        <Card className="border-0 shadow-sm bg-muted/30">
+        <Card className="border shadow-sm bg-muted/30">
           <CardContent className="flex flex-col items-center justify-center py-20 text-center">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
               <Sparkles className="h-5 w-5 text-muted-foreground" />
@@ -103,7 +103,7 @@ export function DiscoverView() {
             variant="outline"
             onClick={handleLoadMore}
             disabled={loadingMore}
-            className="gap-2 h-10 px-5 border-0 shadow-sm bg-card hover:bg-muted"
+            className="gap-2 h-10 px-5 border shadow-sm bg-card hover:bg-muted"
           >
             {loadingMore ? (
               <Loader2 className="h-4 w-4 animate-spin" />

@@ -97,7 +97,7 @@ export function SearchView() {
           placeholder="输入书名、作者或关键词..."
           value={inputValue}
           onChange={(e) => handleSearch(e.target.value)}
-          className="pl-10 h-11 bg-card border-0 shadow-sm text-[15px] placeholder:text-muted-foreground/60"
+          className="pl-10 h-11 bg-card border shadow-sm text-[15px] placeholder:text-muted-foreground/60"
         />
       </div>
 
@@ -122,7 +122,7 @@ export function SearchView() {
       {query && isLoading && maxIdx === 0 && (
         <div className="flex flex-col gap-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i} className="border-0 shadow-sm">
+            <Card key={i} className="border shadow-sm">
               <CardContent className="flex gap-4 p-4">
                 <Skeleton className="h-24 w-[68px] shrink-0 rounded-lg" />
                 <div className="flex flex-1 flex-col gap-2">
@@ -138,7 +138,7 @@ export function SearchView() {
 
       {/* No results */}
       {query && !isLoading && groups.length === 0 && maxIdx === 0 && (
-        <Card className="border-0 shadow-sm bg-muted/30">
+        <Card className="border shadow-sm bg-muted/30">
           <CardContent className="flex flex-col items-center justify-center py-20 text-center">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
               <Search className="h-5 w-5 text-muted-foreground" />
@@ -192,7 +192,7 @@ export function SearchView() {
           <Button
             variant="outline"
             onClick={handleLoadMore}
-            className="gap-2 h-10 px-5 border-0 shadow-sm bg-card hover:bg-muted"
+            className="gap-2 h-10 px-5 border shadow-sm bg-card hover:bg-muted"
             disabled={isLoading}
           >
             <ChevronDown className="h-4 w-4" />
@@ -236,7 +236,7 @@ function BookResultCard({ item }: { item: Record<string, unknown> }) {
 
   return (
     <Link href={bookId ? `/book/${bookId}` : '#'}>
-      <Card className={`border-0 shadow-sm transition-all hover:shadow-md cursor-pointer ${soldout ? 'opacity-60' : ''}`}>
+      <Card className={`border shadow-sm transition-all hover:shadow-md cursor-pointer ${soldout ? 'opacity-60' : ''}`}>
         <CardContent className="flex gap-4 p-4">
           <div className="relative h-24 w-[68px] shrink-0 overflow-hidden rounded-lg bg-muted shadow-sm ring-1 ring-border/50">
             {cover ? (
