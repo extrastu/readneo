@@ -10,6 +10,7 @@ import { ArrowLeft, BookOpen, Copy, Check, ExternalLink, MessageSquare, Pencil, 
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
+import { buildBookDeepLink, buildPositionDeepLink, buildReviewDeepLink } from '@/lib/weread-deep-links'
 
 const REVIEW_TYPES = [
   { value: 0, label: '全部' },
@@ -46,6 +47,7 @@ export function BookDetailView({ bookId }: { bookId: string }) {
   const intro = (info.intro || '') as string
   const category = (info.category || '') as string
   const publisher = (info.publisher || '') as string
+  const bookDeepLink = buildBookDeepLink(bookId)
   const rating = info.newRating ? Math.round((info.newRating as number) / 10) / 10 : null
   const ratingCount = (info.newRatingCount || 0) as number
 
@@ -129,12 +131,14 @@ export function BookDetailView({ bookId }: { bookId: string }) {
                 <p className="mt-1 text-sm text-muted-foreground leading-relaxed line-clamp-4">{intro}</p>
               )}
 
-              <Button variant="outline" size="sm" className="mt-2 w-fit" asChild>
-                <a href={`weread://reading?bId=${bookId}`} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="mr-2 h-3.5 w-3.5" />
-                  {"在微信读书中打开"}
-                </a>
-              </Button>
+              {bookDeepLink && (
+                <Button variant="outline" size="sm" className="mt-2 w-fit" asChild>
+                  <a href={bookDeepLink} target="_blank" rel="noopener noreferrer" aria-label="在微信读书中打开这本书" title="在微信读书中打开这本书">
+                    <ExternalLink className="mr-2 h-3.5 w-3.5" />
+                    {"在微信读书中打开"}
+                  </a>
+                </Button>
+              )}
             </>
           )}
         </div>
@@ -159,6 +163,7 @@ export function BookDetailView({ bookId }: { bookId: string }) {
                 bookId={bookId}
                 chapterUid={hl.chapterUid as number}
                 range={(hl.range || '') as string}
+                userVid={hl.userVid as string | number | undefined}
               />
             ))}
           </div>
@@ -180,7 +185,21 @@ export function BookDetailView({ bookId }: { bookId: string }) {
               const content = (review.content || '') as string
               const chapterName = (review.chapterName || '') as string
               const abstract = (review.abstract || '') as string
-              return <ThoughtCard key={i} content={content} chapter={chapterName} abstract={abstract} />
+              const reviewId = review.reviewId as string | number | undefined
+              const chapterUid = review.chapterUid as string | number | undefined
+              return (
+                <ThoughtCard
+                  key={i}
+                  content={content}
+                  chapter={chapterName}
+                  abstract={abstract}
+                  bookId={bookId}
+                  reviewId={reviewId}
+                  chapterUid={chapterUid}
+                  range={review.range}
+                  userVid={review.userVid as string | number | undefined}
+                />
+              )
             })}
           </div>
         </section>
@@ -241,9 +260,11 @@ export function BookDetailView({ bookId }: { bookId: string }) {
               const createTime = (rvInner.createTime || 0) as number
               const isFinish = rvInner.isFinish as number | undefined
               const chapterName = (rvInner.chapterName || '') as string
+              const reviewId = rvInner.reviewId as string | number | undefined
               const authorInfo = (rvInner.author || {}) as Record<string, unknown>
               const authorName = (authorInfo.name || '匿名') as string
               const authorAvatar = (authorInfo.avatar || '') as string
+              const reviewDeepLink = buildReviewDeepLink(reviewId)
 
               return (
                 <Card key={i} className="border-border">
@@ -280,6 +301,20 @@ export function BookDetailView({ bookId }: { bookId: string }) {
                     )}
 
                     <ReviewContent content={content} htmlContent={htmlContent} />
+                    {reviewDeepLink && (
+                      <a
+                        href={reviewDeepLink}
+                        className="mt-2 inline-flex w-fit items-center gap-1 text-xs text-primary hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="在微信读书中打开这条书友点评"
+                        title="在微信读书中打开这条书友点评"
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        {"在微信读书中打开"}
+                      </a>
+                    )}
                   </CardContent>
                 </Card>
               )
@@ -316,17 +351,12 @@ function ReviewContent({ content, htmlContent }: { content: string; htmlContent:
 }
 
 function HighlightCard({
-  text, chapter, bookId, chapterUid, range,
+  text, chapter, bookId, chapterUid, range, userVid,
 }: {
-  text: string; chapter: string; bookId: string; chapterUid?: number; range: string
+  text: string; chapter: string; bookId: string; chapterUid?: string | number; range: unknown; userVid?: string | number
 }) {
   const [copied, setCopied] = useState(false)
-
-  let deepLink = ''
-  if (chapterUid && range && range.includes('-')) {
-    const [rangeStart, rangeEnd] = range.split('-')
-    deepLink = `weread://bestbookmark?bookId=${bookId}&chapterUid=${chapterUid}&rangeStart=${rangeStart}&rangeEnd=${rangeEnd}`
-  }
+  const deepLink = buildPositionDeepLink({ bookId, chapterUid, range, userVid })
 
   function handleCopy() {
     navigator.clipboard.writeText(text)
@@ -343,8 +373,16 @@ function HighlightCard({
           <div className="flex items-center gap-2">
             {chapter && <span className="text-xs text-muted-foreground">{chapter}</span>}
             {deepLink && (
-              <a href={deepLink} className="text-xs text-primary hover:underline" target="_blank" rel="noopener noreferrer">
-                {"在 App 中查看"}
+              <a
+                href={deepLink}
+                className="text-xs text-primary hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="在微信读书中打开这条划线"
+                title="在微信读书中打开这条划线"
+                onClick={(event) => event.stopPropagation()}
+              >
+                {"在微信读书中查看"}
               </a>
             )}
           </div>
@@ -362,8 +400,28 @@ function HighlightCard({
   )
 }
 
-function ThoughtCard({ content, chapter, abstract }: { content: string; chapter: string; abstract: string }) {
+function ThoughtCard({
+  content,
+  chapter,
+  abstract,
+  bookId,
+  reviewId,
+  chapterUid,
+  range,
+  userVid,
+}: {
+  content: string
+  chapter: string
+  abstract: string
+  bookId: string
+  reviewId?: string | number
+  chapterUid?: string | number
+  range: unknown
+  userVid?: string | number
+}) {
   const [copied, setCopied] = useState(false)
+  const deepLink = buildReviewDeepLink(reviewId) || buildPositionDeepLink({ bookId, chapterUid, range, userVid })
+
   function handleCopy() {
     const t = abstract ? `${abstract}\n---\n${content}` : content
     navigator.clipboard.writeText(t)
@@ -388,7 +446,25 @@ function ThoughtCard({ content, chapter, abstract }: { content: string; chapter:
             {copied ? <Check className="h-3.5 w-3.5 text-chart-2" /> : <Copy className="h-3.5 w-3.5 text-muted-foreground" />}
           </Button>
         </div>
-        {chapter && <span className="ml-4 text-xs text-muted-foreground">{chapter}</span>}
+        {(chapter || deepLink) && (
+          <div className="ml-4 flex items-center gap-2">
+            {chapter && <span className="text-xs text-muted-foreground">{chapter}</span>}
+            {deepLink && (
+              <a
+                href={deepLink}
+                className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={reviewId ? '在微信读书中打开这条想法' : '在微信读书中打开这条想法所在位置'}
+                title={reviewId ? '在微信读书中打开这条想法' : '在微信读书中打开这条想法所在位置'}
+                onClick={(event) => event.stopPropagation()}
+              >
+                <ExternalLink className="h-3 w-3" />
+                {"在微信读书中打开"}
+              </a>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   )

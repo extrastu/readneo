@@ -5,8 +5,9 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Highlighter, BookOpen, Copy, Check, ChevronDown, ChevronUp, MessageSquare, Pencil, Bookmark } from 'lucide-react'
+import { Highlighter, BookOpen, Copy, Check, ChevronDown, ChevronUp, ExternalLink, MessageSquare, Pencil, Bookmark } from 'lucide-react'
 import { useState } from 'react'
+import { buildPositionDeepLink, buildReviewDeepLink } from '@/lib/weread-deep-links'
 
 export function NotesView() {
   const { data, isLoading } = useNotebooks()
@@ -180,6 +181,10 @@ function NotebookContent({ bookId }: { bookId: string }) {
                 type="highlight"
                 text={text}
                 chapter={chapterName}
+                bookId={bookId}
+                chapterUid={chUid}
+                range={hl.range}
+                userVid={hl.userVid as string | number | undefined}
               />
             )
           })}
@@ -193,6 +198,8 @@ function NotebookContent({ bookId }: { bookId: string }) {
             const content = (review.content || '') as string
             const chapterName = (review.chapterName || '') as string
             const abstract = (review.abstract || '') as string
+            const reviewId = review.reviewId as string | number | undefined
+            const chapterUid = review.chapterUid as string | number | undefined
             return (
               <NoteItem
                 key={`rv-${j}`}
@@ -200,6 +207,11 @@ function NotebookContent({ bookId }: { bookId: string }) {
                 text={content}
                 chapter={chapterName}
                 abstract={abstract}
+                bookId={bookId}
+                reviewId={reviewId}
+                chapterUid={chapterUid}
+                range={review.range}
+                userVid={review.userVid as string | number | undefined}
               />
             )
           })}
@@ -209,13 +221,21 @@ function NotebookContent({ bookId }: { bookId: string }) {
   )
 }
 
-function NoteItem({ type, text, chapter, abstract }: {
+function NoteItem({ type, text, chapter, abstract, bookId, reviewId, chapterUid, range, userVid }: {
   type: 'highlight' | 'thought'
   text: string
   chapter: string
   abstract?: string
+  bookId: string
+  reviewId?: string | number
+  chapterUid?: string | number
+  range?: unknown
+  userVid?: string | number
 }) {
   const [copied, setCopied] = useState(false)
+  const deepLink = type === 'thought'
+    ? buildReviewDeepLink(reviewId) || buildPositionDeepLink({ bookId, chapterUid, range, userVid })
+    : buildPositionDeepLink({ bookId, chapterUid, range, userVid })
 
   function handleCopy() {
     const copyText = abstract ? `${abstract}\n---\n${text}` : text
@@ -254,8 +274,28 @@ function NoteItem({ type, text, chapter, abstract }: {
           )}
         </Button>
       </div>
-      {chapter && (
-        <span className="ml-4 text-xs text-muted-foreground/70">{chapter}</span>
+      {(chapter || deepLink) && (
+        <div className="ml-4 flex items-center gap-2">
+          {chapter && <span className="text-xs text-muted-foreground/70">{chapter}</span>}
+          {deepLink && (
+            <a
+              href={deepLink}
+              className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={type === 'thought'
+                ? (reviewId ? '在微信读书中打开这条想法' : '在微信读书中打开这条想法所在位置')
+                : '在微信读书中打开这条划线'}
+              title={type === 'thought'
+                ? (reviewId ? '在微信读书中打开这条想法' : '在微信读书中打开这条想法所在位置')
+                : '在微信读书中打开这条划线'}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <ExternalLink className="h-3 w-3" />
+              {"在微信读书中打开"}
+            </a>
+          )}
+        </div>
       )}
     </div>
   )
