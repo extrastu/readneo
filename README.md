@@ -2,6 +2,13 @@
 
 你的微信读书数据面板 -- 连接微信读书 Skill API，可视化书架、阅读统计、笔记划线，一键导出到 Notion 和 Flomo。
 
+## ios app ReadRelay 上线啦
+
+https://apps.apple.com/app/id6811293525
+
+<img width="3026" height="1286" alt="image" src="https://github.com/user-attachments/assets/8872ef7c-3398-4fbf-81a6-942c296b6a18" />
+
+
 ## 小程序版本 - NoteMover 🔥
 
 <img width="7200" height="5400" alt="IMG_1180" src="https://github.com/user-attachments/assets/1a04686c-8143-4655-a9e2-b9004b589d38" />
