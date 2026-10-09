@@ -41,6 +41,7 @@ export function SettingsView() {
   const [newNotionToken, setNewNotionToken] = useState('')
   const [newNotionDbId, setNewNotionDbId] = useState('')
   const [notionSaved, setNotionSaved] = useState(false)
+  const [flomoInvalid, setFlomoInvalid] = useState(false)
   const router = useRouter()
 
   function handleLogout() {
@@ -57,8 +58,14 @@ export function SettingsView() {
   }
 
   function handleSaveFlomo() {
-    if (!newFlomoUrl.trim()) return
-    setFlomoApiUrl(newFlomoUrl.trim())
+    const url = newFlomoUrl.trim()
+    if (!url) return
+    if (!/^https:\/\/flomoapp\.com\/iwh\//.test(url)) {
+      setFlomoInvalid(true)
+      return
+    }
+    setFlomoInvalid(false)
+    setFlomoApiUrl(url)
     setNewFlomoUrl('')
     setFlomoSaved(true)
     setTimeout(() => setFlomoSaved(false), 2000)
@@ -93,7 +100,7 @@ export function SettingsView() {
         <CardContent className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <label className="text-sm text-muted-foreground">{"当前 API Key"}</label>
-            <code className="rounded-lg bg-muted px-3 py-2 text-sm font-mono text-foreground">
+            <code className="rounded-lg bg-muted px-3 py-2 text-sm font-mono text-foreground break-all">
               {apiKey ? `${apiKey.slice(0, 8)}${'*'.repeat(24)}${apiKey.slice(-4)}` : '未设置'}
             </code>
           </div>
@@ -175,13 +182,21 @@ export function SettingsView() {
             </div>
           )}
 
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2">
             <Input
               placeholder="https://flomoapp.com/iwh/xxx/yyy"
               value={newFlomoUrl}
-              onChange={(e) => setNewFlomoUrl(e.target.value)}
+              onChange={(e) => {
+                setNewFlomoUrl(e.target.value)
+                if (flomoInvalid) setFlomoInvalid(false)
+              }}
               className="bg-card border-border font-mono text-sm"
             />
+            {flomoInvalid && (
+              <p className="text-xs text-destructive">
+                {"API 地址格式不正确，应以 https://flomoapp.com/iwh/ 开头"}
+              </p>
+            )}
             <Button onClick={handleSaveFlomo} disabled={!newFlomoUrl.trim()}>
               {flomoSaved ? '已保存' : '保存'}
             </Button>

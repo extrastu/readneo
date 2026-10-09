@@ -17,7 +17,7 @@ export function ShelfView() {
     ...(Array.isArray(books) ? books : []),
     ...(Array.isArray(albums) ? albums : []),
   ]
-  const totalCount = allBooks.length + (data?.mp ? 1 : 0)
+  const totalCount = allBooks.length + (Array.isArray(data?.mp) ? (data!.mp as unknown[]).length : data?.mp ? 1 : 0)
 
   return (
     <div className="flex flex-col gap-6">

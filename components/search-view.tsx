@@ -44,6 +44,15 @@ export function SearchView() {
     : groups.flatMap((g: Record<string, unknown>) => (g.books || []) as Record<string, unknown>[])
 
   const displayBooks = maxIdx === 0 ? currentBooks : [...allResults, ...currentBooks]
+  // Dedupe by bookId — stale SWR data during a page transition can duplicate entries
+  const seenBookIds = new Set<string>()
+  const dedupedBooks = displayBooks.filter((item: Record<string, unknown>) => {
+    const info = (item.bookInfo || item) as Record<string, unknown>
+    const id = (info.bookId || '') as string
+    if (id && seenBookIds.has(id)) return false
+    if (id) seenBookIds.add(id)
+    return true
+  })
   const displayGroups = maxIdx === 0 ? groups : (scope === 0 ? [...allGroups, ...groups] : [])
 
   const handleSearch = useCallback((value: string) => {
@@ -178,9 +187,9 @@ export function SearchView() {
       )}
 
       {/* Flat list (scope>0) */}
-      {scope !== 0 && displayBooks.length > 0 && (
+      {scope !== 0 && dedupedBooks.length > 0 && (
         <div className="flex flex-col gap-3">
-          {displayBooks.map((item: Record<string, unknown>, i: number) => (
+          {dedupedBooks.map((item: Record<string, unknown>, i: number) => (
             <BookResultCard key={i} item={item} />
           ))}
         </div>

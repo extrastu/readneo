@@ -79,7 +79,8 @@ export function DashboardView() {
   const albums = shelfData?.albums || []
   const allItems = [...(Array.isArray(books) ? books : []), ...(Array.isArray(albums) ? albums : [])]
   const recentBooks = allItems.slice(0, 8)
-  const totalBooks = allItems.length + (shelfData?.mp ? 1 : 0)
+  const mpCount = Array.isArray(shelfData?.mp) ? (shelfData!.mp as unknown[]).length : shelfData?.mp ? 1 : 0
+  const totalBooks = allItems.length + mpCount
 
   const readTime = (overallData?.totalReadTime || 0) as number
   const readDays = (overallData?.readDays || 0) as number

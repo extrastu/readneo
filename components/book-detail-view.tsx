@@ -197,9 +197,9 @@ export function BookDetailView({ bookId }: { bookId: string }) {
         {deepVInfo && (
           <Card className="mb-4 border-primary/20 bg-primary/5">
             <CardContent className="p-4">
-              <p className="text-sm font-medium text-foreground">{deepVInfo.title as string}</p>
-              {deepVInfo.subtitle && (
-                <p className="mt-0.5 text-xs text-muted-foreground">{deepVInfo.subtitle as string}</p>
+              <p className="text-sm font-medium text-foreground">{String(deepVInfo.title ?? '')}</p>
+              {Boolean(deepVInfo.subtitle) && (
+                <p className="mt-0.5 text-xs text-muted-foreground">{String(deepVInfo.subtitle)}</p>
               )}
               {deepVValue !== undefined && (
                 <div className="mt-2 flex items-center gap-2">

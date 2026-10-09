@@ -56,11 +56,15 @@ export function StatsView() {
 
   // Build heatmap data for last 365 days
   const heatmapData = useMemo(() => {
-    // Pre-index overall readTimes by local date for O(1) lookup
+    // Pre-index overall readTimes by local date for O(1) lookup.
+    // First entry per date wins (day-start timestamps are 1:1 with dates).
     const minutesByDate = new Map<string, number>()
     for (const [key, seconds] of Object.entries(heatmapReadTimes)) {
       const d = new Date(Number(key) * 1000)
-      minutesByDate.set(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`, Math.round((seconds as number) / 60))
+      const dateKey = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
+      if (!minutesByDate.has(dateKey)) {
+        minutesByDate.set(dateKey, Math.round((seconds as number) / 60))
+      }
     }
 
     const today = new Date()
@@ -332,10 +336,9 @@ export function StatsView() {
                     boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
                   }}
                   formatter={(value: number) => [`${value} 分钟`, '阅读时长']}
-                  labelFormatter={(_: unknown, payload: Array<Record<string, unknown>>) => {
+                  labelFormatter={(_: unknown, payload: Array<{ payload?: { fullDate?: string } }>) => {
                     if (payload?.[0]?.payload) {
-                      const p = payload[0].payload as { fullDate: string }
-                      return p.fullDate
+                      return payload[0].payload.fullDate || ''
                     }
                     return ''
                   }}
