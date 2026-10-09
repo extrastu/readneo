@@ -178,6 +178,7 @@ export function ExportView() {
 
     try {
       const zip = new JSZip()
+      let exportedCount = 0
       for (let i = 0; i < total; i++) {
         const nb = booksWithNotes[i]
         const bookInfo = (nb.book || {}) as Record<string, unknown>
@@ -197,13 +198,14 @@ export function ExportView() {
         const md = bookToMarkdown(bookInfo, highlights, reviews, chapterMap)
         const filename = `${sanitize(title)}.md`
         zip.file(filename, md)
+        exportedCount++
       }
 
       setMdProgress((p) => ({ ...p, status: 'generating', message: '正在生成 ZIP 文件...' }))
       const blob = await zip.generateAsync({ type: 'blob' })
       saveAs(blob, `readNeo-笔记导出-${new Date().toISOString().slice(0, 10)}.zip`)
 
-      setMdProgress({ total, current: total, currentBook: '', status: 'done', message: `成功导出 ${total} 本书的笔记` })
+      setMdProgress({ total, current: total, currentBook: '', status: 'done', message: `成功导出 ${exportedCount} 本书的笔记` })
     } catch (err) {
       setMdProgress((p) => ({
         ...p,
@@ -250,12 +252,12 @@ export function ExportView() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content }),
           })
-          const flomoJson = await flomoRes.json().catch(() => ({}))
-          if (flomoJson.code === -1) {
+          const flomoJson = await flomoRes.json().catch(() => null)
+          if (!flomoRes.ok || !flomoJson || flomoJson.code !== 0) {
             setFlomoProgress((p) => ({
               ...p,
               status: 'error',
-              message: `已同步 ${totalSynced} 条。Flomo 提示：${flomoJson.message || '已达每日 API 上限 100 条'}`,
+              message: `已同步 ${totalSynced} 条。Flomo 提示：${flomoJson?.message || `HTTP ${flomoRes.status}`}`,
             }))
             return
           }
@@ -278,12 +280,12 @@ export function ExportView() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content }),
           })
-          const flomoJson2 = await flomoRes2.json().catch(() => ({}))
-          if (flomoJson2.code === -1) {
+          const flomoJson2 = await flomoRes2.json().catch(() => null)
+          if (!flomoRes2.ok || !flomoJson2 || flomoJson2.code !== 0) {
             setFlomoProgress((p) => ({
               ...p,
               status: 'error',
-              message: `已同步 ${totalSynced} 条。Flomo 提示：${flomoJson2.message || '已达每日 API 上限 100 条'}`,
+              message: `已同步 ${totalSynced} 条。Flomo 提示：${flomoJson2?.message || `HTTP ${flomoRes2.status}`}`,
             }))
             return
           }

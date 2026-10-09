@@ -1,6 +1,15 @@
+// 微信读书 Agent 网关地址与协议版本，与官方 WeChatReading Skill 规范保持一致
 const WEREAD_GATEWAY = 'https://i.weread.qq.com/api/agent/gateway'
-const SKILL_VERSION = '1.0.3'
+const SKILL_VERSION = '1.0.4'
 
+/**
+ * 微信读书网关统一请求函数
+ * @param apiKey 微信读书用户 API Key（Bearer Token 鉴权）
+ * @param apiName 目标接口路径，需与微信读书 Skill 规范一致（如 /shelf/sync）
+ * @param params 业务请求参数，平铺在请求体顶层与 api_name、skill_version 并列
+ * @returns 微信读书接口返回的 JSON 数据
+ * @throws 当 HTTP 异常、JSON 解析失败或服务端 errcode 非 0 时抛出错误
+ */
 export async function wereadFetch(apiKey: string, apiName: string, params: Record<string, unknown> = {}) {
   // Per SKILL spec: all business params must be flat at top level alongside api_name and skill_version
   const res = await fetch(WEREAD_GATEWAY, {

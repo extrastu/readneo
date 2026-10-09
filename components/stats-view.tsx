@@ -50,32 +50,30 @@ export function StatsView() {
 
   const readTimes = (detailData?.readTimes || {}) as Record<string, number>
 
+  // Heatmap uses overall data — the selected mode only covers one week/month/year
+  // while the heatmap claims to show the past 365 days
+  const heatmapReadTimes = (overallData?.readTimes || {}) as Record<string, number>
+
   // Build heatmap data for last 365 days
   const heatmapData = useMemo(() => {
+    // Pre-index overall readTimes by local date for O(1) lookup
+    const minutesByDate = new Map<string, number>()
+    for (const [key, seconds] of Object.entries(heatmapReadTimes)) {
+      const d = new Date(Number(key) * 1000)
+      minutesByDate.set(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`, Math.round((seconds as number) / 60))
+    }
+
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     const days: Array<{ date: Date; dateStr: string; minutes: number; level: number }> = []
-    
+
     // Generate last 365 days
     for (let i = 364; i >= 0; i--) {
       const d = new Date(today)
       d.setDate(d.getDate() - i)
-      const ts = Math.floor(d.getTime() / 1000)
-      
-      // Find matching readTime entry (API uses day-start timestamps)
-      let minutes = 0
-      for (const [key, seconds] of Object.entries(readTimes)) {
-        const keyTs = Number(key)
-        const keyDate = new Date(keyTs * 1000)
-        if (
-          keyDate.getFullYear() === d.getFullYear() &&
-          keyDate.getMonth() === d.getMonth() &&
-          keyDate.getDate() === d.getDate()
-        ) {
-          minutes = Math.round(seconds / 60)
-          break
-        }
-      }
+
+      // API uses day-start timestamps; match by local date
+      const minutes = minutesByDate.get(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`) || 0
 
       // Level 0-4 based on reading minutes
       let level = 0
@@ -92,7 +90,7 @@ export function StatsView() {
       })
     }
     return days
-  }, [readTimes])
+  }, [heatmapReadTimes])
 
   // Group by weeks for grid layout
   const weeks = useMemo(() => {
