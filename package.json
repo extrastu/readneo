@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:cf": "node scripts/build-cf-pages.mjs",
     "start": "next start",
     "lint": "eslint ."
   },

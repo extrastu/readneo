@@ -2,7 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://readneo.vercel.app'
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://readneo.pages.dev').replace(/\/+$/, '')
+const isVercel = Boolean(process.env.VERCEL)
 
 export const metadata: Metadata = {
   title: {
@@ -110,7 +111,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased">
         {children}
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        {process.env.NODE_ENV === 'production' && isVercel && <Analytics />}
         <script
           dangerouslySetInnerHTML={{
             __html: `

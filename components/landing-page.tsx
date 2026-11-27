@@ -115,7 +115,7 @@ export function LandingPage() {
     '@type': 'WebApplication',
     name: 'readNeo',
     description: '连接微信读书，可视化你的阅读数据。管理书架、追踪阅读统计、导出笔记划线。',
-    url: 'https://readneo.vercel.app',
+    url: (process.env.NEXT_PUBLIC_SITE_URL || 'https://readneo.pages.dev').replace(/\/+$/, ''),
     applicationCategory: 'ProductivityApplication',
     operatingSystem: 'Web',
     offers: {

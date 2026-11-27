@@ -1,7 +1,13 @@
 import { MetadataRoute } from 'next'
 
+export const dynamic = 'force-static'
+
+/**
+ * 生成站点地图路由列表，兼容 Next.js 静态导出与常规服务端渲染
+ * @returns 站点主要公开与功能入口的 Sitemap 配置数组
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://readneo.vercel.app'
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://readneo.pages.dev').replace(/\/+$/, '')
 
   return [
     {

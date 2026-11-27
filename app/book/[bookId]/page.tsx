@@ -1,37 +1,17 @@
-'use client'
+import { BookDetailClient } from './book-detail-client'
 
-import { useWeReadStore } from '@/lib/store'
-import { AppShell } from '@/components/app-shell'
-import { BookDetailView } from '@/components/book-detail-view'
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+/**
+ * 为 Next.js 静态导出生成占位路由参数
+ * 配合 Cloudflare Pages 的 _redirects 规则，将任意 /book/:bookId 请求重写到占位页并由客户端解析真实 ID
+ * @returns 静态占位参数列表
+ */
+export function generateStaticParams() {
+  return [{ bookId: '_' }]
+}
 
+/**
+ * 书籍详情页服务端入口组件，渲染客户端详情容器
+ */
 export default function BookDetailPage() {
-  const isConfigured = useWeReadStore((s) => s.isConfigured)
-  const [mounted, setMounted] = useState(false)
-  const params = useParams()
-  const bookId = params.bookId as string
-  const router = useRouter()
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (mounted && !isConfigured) router.push('/')
-  }, [mounted, isConfigured, router])
-
-  if (!mounted || !isConfigured) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-      </div>
-    )
-  }
-
-  return (
-    <AppShell>
-      <BookDetailView bookId={bookId} />
-    </AppShell>
-  )
+  return <BookDetailClient />
 }

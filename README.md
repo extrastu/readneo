@@ -54,6 +54,22 @@ pnpm dev
 
 打开 [http://localhost:3000](http://localhost:3000) 查看。
 
+## 部署到 Cloudflare Pages
+
+项目支持通过「Next.js 静态导出 + Cloudflare Pages Functions」直接部署到 Cloudflare Pages（默认站点地址 `https://readneo.pages.dev/`）：
+
+- **构建命令（Build command）**：`pnpm build:cf`
+- **构建输出目录（Build output directory）**：`out`
+- **环境变量（可选）**：`NEXT_PUBLIC_SITE_URL=https://readneo.pages.dev`
+- **API 代理**：线上 `/api/weread` 与 `/api/notion` 由根目录 `functions/api/` 下的 Cloudflare Pages Functions 自动接管
+
+本地也可以通过 Wrangler 手动部署：
+
+```bash
+pnpm build:cf
+npx wrangler pages deploy out --project-name=readneo
+```
+
 ## 许可
 
 MIT

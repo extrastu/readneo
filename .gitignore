@@ -12,5 +12,8 @@ __v0_jsx-dev-runtime.ts
 # Common ignores
 node_modules
 .next/
+out/
+.wrangler/
+.cf-api-backup/
 .DS_Store
 .vercel

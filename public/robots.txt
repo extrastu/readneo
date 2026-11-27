@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://readneo.vercel.app/sitemap.xml
+Sitemap: https://readneo.pages.dev/sitemap.xml
